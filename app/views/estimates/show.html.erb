@@ -5,6 +5,21 @@
     <p class="py-2 px-3 bg-green-50 mb-4 text-green-500 font-medium rounded-md inline-block"><%= notice %></p>
   <% end %>
 
+  <%# 共有リンク期限 %>
+  <% if @estimate.share_token_expires_at.present? %>
+    <% days_left = (@estimate.share_token_expires_at.to_date - Date.today).to_i %>
+    <div class="no-print mb-3 flex items-center gap-3 text-xs">
+      <% if days_left > 7 %>
+        <span class="text-gray-400">共有リンク有効期限：<span class="text-gray-600"><%= @estimate.share_token_expires_at.strftime("%Y年%-m月%-d日") %>（残り<%= days_left %>日）</span></span>
+      <% elsif days_left > 0 %>
+        <span class="text-orange-500 font-medium">共有リンク残り<%= days_left %>日で期限切れ</span>
+      <% else %>
+        <span class="text-red-500 font-medium">共有リンク期限切れ</span>
+      <% end %>
+      <%= button_to "30日延長", extend_share_project_estimate_path(@project, @estimate), method: :patch, class: "px-2 py-0.5 bg-gray-100 hover:bg-gray-200 rounded text-gray-600 cursor-pointer" %>
+    </div>
+  <% end %>
+
   <div class="mb-4 flex items-center justify-between">
     <div>
       <%= link_to "← #{@project.name}", project_path(@project), class: "text-sm text-gray-500 hover:text-gray-700" %>

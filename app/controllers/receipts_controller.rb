@@ -1,7 +1,21 @@
 class ReceiptsController < ApplicationController
-  before_action :authenticate_user!
-  before_action :set_project
-  before_action :set_receipt, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!, except: [:public_show]
+  before_action :set_project, except: [:public_show]
+  before_action :set_receipt, only: [:show, :edit, :update, :destroy, :extend_share]
+
+  def public_show
+    @receipt = Receipt.find_by!(share_token: params[:token])
+    if @receipt.share_token_expired?
+      render "estimates/expired", layout: "application", status: :gone and return
+    end
+    @project = @receipt.project
+    render :public_show, layout: "application"
+  end
+
+  def extend_share
+    @receipt.update!(share_token_expires_at: 30.days.from_now)
+    redirect_to project_receipt_path(@project, @receipt), notice: "共有リンクを30日延長しました"
+  end
 
   def show
   end

@@ -1,10 +1,13 @@
 class EstimatesController < ApplicationController
-  before_action :authenticate_user!
-  before_action :set_project, except: [:index]
-  before_action :set_estimate, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!, except: [:public_show]
+  before_action :set_project, except: [:index, :public_show]
+  before_action :set_estimate, only: [:show, :edit, :update, :destroy, :extend_share]
 
   def public_show
     @estimate = Estimate.find_by!(share_token: params[:token])
+    if @estimate.share_token_expired?
+      render :expired, layout: "application", status: :gone and return
+    end
     @project = @estimate.project
     render :public_show, layout: "application"
   end
@@ -47,6 +50,11 @@ class EstimatesController < ApplicationController
     else
       render :edit, status: :unprocessable_content
     end
+  end
+
+  def extend_share
+    @estimate.update!(share_token_expires_at: 30.days.from_now)
+    redirect_to project_estimate_path(@project, @estimate), notice: "共有リンクを30日延長しました"
   end
 
   def destroy

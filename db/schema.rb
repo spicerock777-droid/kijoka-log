@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_19_075339) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_19_081853) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -70,6 +70,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_19_075339) do
     t.text "note"
     t.bigint "project_id", null: false
     t.string "share_token"
+    t.datetime "share_token_expires_at"
     t.string "subject"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
@@ -86,10 +87,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_19_075339) do
     t.date "invoiced_on"
     t.text "note"
     t.bigint "project_id", null: false
+    t.string "share_token"
+    t.datetime "share_token_expires_at"
     t.string "subject"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["project_id"], name: "index_invoices_on_project_id"
+    t.index ["share_token"], name: "index_invoices_on_share_token", unique: true
     t.index ["user_id"], name: "index_invoices_on_user_id"
   end
 
@@ -110,10 +114,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_19_075339) do
     t.string "payment_method"
     t.bigint "project_id", null: false
     t.date "received_on"
+    t.string "share_token"
+    t.datetime "share_token_expires_at"
     t.string "tadashi"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["project_id"], name: "index_receipts_on_project_id"
+    t.index ["share_token"], name: "index_receipts_on_share_token", unique: true
     t.index ["user_id"], name: "index_receipts_on_user_id"
   end
 

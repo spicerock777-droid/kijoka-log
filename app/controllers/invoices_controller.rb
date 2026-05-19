@@ -1,7 +1,21 @@
 class InvoicesController < ApplicationController
-  before_action :authenticate_user!
-  before_action :set_project
-  before_action :set_invoice, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!, except: [:public_show]
+  before_action :set_project, except: [:public_show]
+  before_action :set_invoice, only: [:show, :edit, :update, :destroy, :extend_share]
+
+  def public_show
+    @invoice = Invoice.find_by!(share_token: params[:token])
+    if @invoice.share_token_expired?
+      render "estimates/expired", layout: "application", status: :gone and return
+    end
+    @project = @invoice.project
+    render :public_show, layout: "application"
+  end
+
+  def extend_share
+    @invoice.update!(share_token_expires_at: 30.days.from_now)
+    redirect_to project_invoice_path(@project, @invoice), notice: "共有リンクを30日延長しました"
+  end
 
   def index
     @projects = Project.all.order(:name)

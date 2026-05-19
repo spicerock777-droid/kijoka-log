@@ -1,47 +1,12 @@
 <% content_for :title, "領収書" %>
 
 <div class="w-full max-w-lg">
-  <% if notice.present? %>
-    <p class="py-2 px-3 bg-green-50 mb-4 text-green-500 font-medium rounded-md text-sm"><%= notice %></p>
-  <% end %>
-
-  <%# 共有リンク期限 %>
-  <% if @receipt.share_token_expires_at.present? %>
-    <% days_left = (@receipt.share_token_expires_at.to_date - Date.today).to_i %>
-    <div class="no-print mb-3 flex items-center gap-3 text-xs">
-      <% if days_left > 7 %>
-        <span class="text-gray-400">共有リンク有効期限：<span class="text-gray-600"><%= @receipt.share_token_expires_at.strftime("%Y年%-m月%-d日") %>（残り<%= days_left %>日）</span></span>
-      <% elsif days_left > 0 %>
-        <span class="text-orange-500 font-medium">共有リンク残り<%= days_left %>日で期限切れ</span>
-      <% else %>
-        <span class="text-red-500 font-medium">共有リンク期限切れ</span>
-      <% end %>
-      <%= button_to "30日延長", extend_share_project_receipt_path(@project, @receipt), method: :patch, class: "px-2 py-0.5 bg-gray-100 hover:bg-gray-200 rounded text-gray-600 cursor-pointer" %>
-    </div>
-  <% end %>
-
-  <div class="mb-4 flex items-center justify-between no-print">
-    <%= link_to "← #{@project.name}", project_path(@project), class: "text-sm text-gray-500 hover:text-gray-700" %>
-    <div class="flex gap-2 flex-wrap justify-end">
-      <%= link_to "編集", edit_project_receipt_path(@project, @receipt), class: "text-sm px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-md" %>
-      <%= button_to "削除", project_receipt_path(@project, @receipt), method: :delete,
-          class: "text-sm px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-md cursor-pointer",
-          data: { turbo_confirm: "削除しますか？" } %>
-      <button onclick="window.print()" class="text-sm px-3 py-1.5 bg-green-700 text-white hover:bg-green-600 rounded-md">印刷 / PDF</button>
-      <%= link_to "LINEで送る",
-            "https://line.me/R/msg/text/?#{CGI.escape("【領収書】\n現場：#{@project.name}\n#{@receipt.tadashi}\n金額：¥#{number_with_delimiter(@receipt.amount)}\n\n詳細はこちら：#{request.base_url}/r/#{@receipt.share_token}")}",
-            target: "_blank",
-            class: "text-sm px-3 py-1.5 bg-green-500 text-white hover:bg-green-400 rounded-md" %>
-      <%= link_to "メールで送る",
-            "mailto:?subject=#{CGI.escape("【領収書】#{@receipt.tadashi}")}&body=#{CGI.escape("#{@receipt.client_name.presence || ""}様\n\n領収書をお送りします。\n\n現場：#{@project.name}\n受領金額：¥#{number_with_delimiter(@receipt.amount)}\n\n詳細はこちらからご確認ください：\n#{request.base_url}/r/#{@receipt.share_token}\n\nよろしくお願いいたします。")}",
-            class: "text-sm px-3 py-1.5 bg-blue-500 text-white hover:bg-blue-400 rounded-md" %>
-    </div>
+  <div class="mb-4 flex justify-end no-print">
+    <button onclick="window.print()" class="text-sm px-3 py-1.5 bg-green-700 text-white hover:bg-green-600 rounded-md">印刷 / PDF</button>
   </div>
 
-  <%# 領収書本体 %>
   <div class="bg-white border border-gray-100 rounded-xl p-10 shadow-sm" id="receipt-print">
 
-    <%# 収入印紙欄（5万円以上） %>
     <% if @receipt.amount.to_i >= 50000 %>
       <div class="flex justify-end mb-6">
         <div class="border border-gray-300 rounded w-24 h-16 flex items-center justify-center">
@@ -50,7 +15,6 @@
       </div>
     <% end %>
 
-    <%# タイトル %>
     <div class="text-center mb-10">
       <p class="text-xs tracking-widest text-gray-400 mb-2">RECEIPT</p>
       <h1 class="text-3xl font-medium text-gray-700" style="font-family: 'Shippori Mincho', serif; letter-spacing: 0.6em;">領　収　書</h1>
@@ -61,7 +25,6 @@
       </div>
     </div>
 
-    <%# お客様名 %>
     <div class="mb-8">
       <div class="text-xs text-gray-400 mb-1.5 tracking-wide">お客様名</div>
       <div class="text-xl font-medium text-gray-800 border-b border-gray-400 pb-2">
@@ -69,7 +32,6 @@
       </div>
     </div>
 
-    <%# 金額 %>
     <div class="mb-8 text-center py-6 border-y border-gray-200">
       <div class="text-xs text-gray-400 mb-2 tracking-wide">受領金額</div>
       <div class="text-4xl font-bold text-gray-800" style="font-family: 'Shippori Mincho', serif;">
@@ -78,7 +40,6 @@
       <div class="text-xs text-gray-400 mt-1">（税込）</div>
     </div>
 
-    <%# 受領日・但し書き %>
     <div class="space-y-4 mb-8">
       <div class="flex gap-6 text-sm">
         <span class="text-gray-400 w-16 flex-shrink-0">受領日</span>
@@ -102,14 +63,12 @@
       上記の金額、正に領収いたしました。
     </div>
 
-    <%# 備考 %>
     <% if @receipt.note.present? %>
       <div class="mt-6 text-xs text-gray-400">
         <span class="mr-2">備考：</span><%= @receipt.note %>
       </div>
     <% end %>
 
-    <%# 発行者 %>
     <div class="mt-8 text-right text-sm text-gray-500">
       <div class="font-medium text-gray-700"><%= @project.name %></div>
       <div class="text-xs text-gray-400 mt-1">環境整備事業</div>

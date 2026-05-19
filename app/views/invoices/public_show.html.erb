@@ -1,41 +1,8 @@
 <% content_for :title, "請求書" %>
 
 <div class="w-full max-w-lg">
-  <% if notice.present? %>
-    <p class="py-2 px-3 bg-green-50 mb-4 text-green-500 font-medium rounded-md text-sm"><%= notice %></p>
-  <% end %>
-
-  <%# 共有リンク期限 %>
-  <% if @invoice.share_token_expires_at.present? %>
-    <% days_left = (@invoice.share_token_expires_at.to_date - Date.today).to_i %>
-    <div class="no-print mb-3 flex items-center gap-3 text-xs">
-      <% if days_left > 7 %>
-        <span class="text-gray-400">共有リンク有効期限：<span class="text-gray-600"><%= @invoice.share_token_expires_at.strftime("%Y年%-m月%-d日") %>（残り<%= days_left %>日）</span></span>
-      <% elsif days_left > 0 %>
-        <span class="text-orange-500 font-medium">共有リンク残り<%= days_left %>日で期限切れ</span>
-      <% else %>
-        <span class="text-red-500 font-medium">共有リンク期限切れ</span>
-      <% end %>
-      <%= button_to "30日延長", extend_share_project_invoice_path(@project, @invoice), method: :patch, class: "px-2 py-0.5 bg-gray-100 hover:bg-gray-200 rounded text-gray-600 cursor-pointer" %>
-    </div>
-  <% end %>
-
-  <div class="mb-4 flex items-center justify-between no-print">
-    <%= link_to "← #{@project.name}", project_path(@project), class: "text-sm text-gray-500 hover:text-gray-700" %>
-    <div class="flex gap-2 flex-wrap justify-end">
-      <%= link_to "編集", edit_project_invoice_path(@project, @invoice), class: "text-sm px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-md" %>
-      <%= button_to "削除", project_invoice_path(@project, @invoice), method: :delete,
-          class: "text-sm px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-md cursor-pointer",
-          data: { turbo_confirm: "削除しますか？" } %>
-      <button onclick="window.print()" class="text-sm px-3 py-1.5 bg-green-700 text-white hover:bg-green-600 rounded-md">印刷 / PDF</button>
-      <%= link_to "LINEで送る",
-            "https://line.me/R/msg/text/?#{CGI.escape("【請求書】\n現場：#{@project.name}\n#{@invoice.subject}\n金額：¥#{number_with_delimiter(@invoice.amount)}\n\n詳細はこちら：#{request.base_url}/i/#{@invoice.share_token}")}",
-            target: "_blank",
-            class: "text-sm px-3 py-1.5 bg-green-500 text-white hover:bg-green-400 rounded-md" %>
-      <%= link_to "メールで送る",
-            "mailto:?subject=#{CGI.escape("【請求書】#{@invoice.subject}")}&body=#{CGI.escape("#{@invoice.client_name.presence || ""}様\n\n請求書をお送りします。\n\n現場：#{@project.name}\n件名：#{@invoice.subject}\n請求金額：¥#{number_with_delimiter(@invoice.amount)}\n\n詳細はこちらからご確認ください：\n#{request.base_url}/i/#{@invoice.share_token}\n\nよろしくお願いいたします。")}",
-            class: "text-sm px-3 py-1.5 bg-blue-500 text-white hover:bg-blue-400 rounded-md" %>
-    </div>
+  <div class="mb-4 flex justify-end no-print">
+    <button onclick="window.print()" class="text-sm px-3 py-1.5 bg-green-700 text-white hover:bg-green-600 rounded-md">印刷 / PDF</button>
   </div>
 
   <div class="bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden" id="invoice-print" style="-webkit-print-color-adjust: exact; print-color-adjust: exact;">
