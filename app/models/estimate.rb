@@ -11,8 +11,16 @@ class Estimate < ApplicationRecord
     where("client_name ILIKE :q OR subject ILIKE :q", q: "%#{q}%") if q.present?
   }
 
-  def subtotal
+  def work_subtotal
     items.sum { |item| (item["qty"].to_f * item["unit_price"].to_f).round }
+  end
+
+  def material_subtotal
+    items.sum { |item| item["material_cost"].to_i }
+  end
+
+  def subtotal
+    work_subtotal + material_subtotal
   end
 
   def tax

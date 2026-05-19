@@ -41,12 +41,19 @@
         <% @estimate.items.each do |item| %>
           <% next if item["description"].blank? && item["unit_price"].to_f == 0 %>
           <% qty = item["qty"].to_f; price = item["unit_price"].to_f; amt = (qty * price).round %>
+          <% mat_cost = item["material_cost"].to_i %>
           <div class="bg-gray-50 border border-gray-100 rounded-lg px-4 py-3">
             <div class="font-medium text-green-900 text-sm mb-1"><%= item["description"] %></div>
             <div class="flex justify-between items-center text-xs text-gray-500">
               <span><%= qty > 0 ? "#{qty.to_i} #{item["unit"]}" : "" %> × ¥<%= number_with_delimiter(price.to_i) %></span>
               <span class="text-base font-bold text-green-800"><%= amt > 0 ? "¥#{number_with_delimiter(amt)}" : "" %></span>
             </div>
+            <% if item["material_name"].present? || mat_cost > 0 %>
+              <div class="flex justify-between items-center text-xs text-amber-600 mt-1 pt-1 border-t border-amber-100">
+                <span>資材：<%= item["material_name"].presence || "—" %></span>
+                <span class="font-medium"><%= mat_cost > 0 ? "¥#{number_with_delimiter(mat_cost)}" : "" %></span>
+              </div>
+            <% end %>
             <% if item["note"].present? %>
               <div class="text-xs text-gray-400 mt-1"><%= item["note"] %></div>
             <% end %>
@@ -57,9 +64,15 @@
       <%# 合計 %>
       <div class="bg-gray-50 border border-gray-200 rounded-lg overflow-hidden">
         <div class="flex justify-between px-4 py-2.5 border-b border-gray-200 text-sm">
-          <span class="text-gray-500">小計</span>
-          <span class="font-medium">¥<%= number_with_delimiter(@estimate.subtotal) %></span>
+          <span class="text-gray-500">施工費小計</span>
+          <span class="font-medium">¥<%= number_with_delimiter(@estimate.work_subtotal) %></span>
         </div>
+        <% if @estimate.material_subtotal > 0 %>
+          <div class="flex justify-between px-4 py-2.5 border-b border-gray-200 text-sm">
+            <span class="text-amber-600">資材費小計</span>
+            <span class="font-medium text-amber-600">¥<%= number_with_delimiter(@estimate.material_subtotal) %></span>
+          </div>
+        <% end %>
         <div class="flex justify-between px-4 py-2.5 border-b border-gray-200 text-sm">
           <span class="text-gray-500">消費税（10%）</span>
           <span class="font-medium">¥<%= number_with_delimiter(@estimate.tax) %></span>
