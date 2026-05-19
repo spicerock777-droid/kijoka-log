@@ -39,7 +39,8 @@
               amount:      @estimate.grand_total,
               tadashi:     "#{@estimate.subject}施工代として"),
             class: "text-sm px-3 py-1.5 bg-stone-100 text-stone-700 hover:bg-stone-200 rounded-md" %>
-      <button onclick="window.print()" class="text-sm px-3 py-1.5 bg-green-700 text-white hover:bg-green-600 rounded-md">印刷 / PDF</button>
+      <button onclick="window.print()" class="text-sm px-3 py-1.5 bg-green-700 text-white hover:bg-green-600 rounded-md">印刷</button>
+      <button onclick="downloadPdf('estimate-print', '御見積書_<%= j @estimate.subject %>_<%= @estimate.doc_date.strftime("%Y%m%d") %>')" class="text-sm px-3 py-1.5 bg-indigo-600 text-white hover:bg-indigo-500 rounded-md">PDFダウンロード</button>
       <%= link_to "LINEで送る",
             "https://line.me/R/msg/text/?#{CGI.escape("【御見積書】\n現場：#{@project.name}\n#{@estimate.subject}\n合計：¥#{number_with_delimiter(@estimate.grand_total)}\n\n詳細はこちら：#{request.base_url}/e/#{@estimate.share_token}")}",
             target: "_blank",
@@ -212,4 +213,17 @@
   }
   document.addEventListener('turbo:load', applyTheme)
   document.addEventListener('DOMContentLoaded', applyTheme)
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+  function downloadPdf(elementId, filename) {
+    const el = document.getElementById(elementId)
+    html2pdf().set({
+      margin: 8,
+      filename: filename + '.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    }).from(el).save()
+  }
 </script>
