@@ -1,0 +1,69 @@
+<%= form_with(model: [@project, construction_record], class: "contents") do |form| %>
+  <% if construction_record.errors.any? %>
+    <div class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
+      <ul class="list-disc ml-6">
+        <% construction_record.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="my-5">
+    <%= form.label :worked_on, "施工日", class: "block font-medium text-gray-700" %>
+    <%= form.date_field :worked_on, class: "block shadow-sm rounded-md border border-gray-400 px-3 py-2 mt-2 w-full focus:outline-blue-600" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :site, "場所", class: "block font-medium text-gray-700" %>
+    <%= form.select :site, @project.sites, { include_blank: "選択してください" }, class: "block shadow-sm rounded-md border border-gray-400 px-3 py-2 mt-2 w-full focus:outline-blue-600" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :work_items, "施工内容", class: "block font-medium text-gray-700" %>
+    <%= form.textarea :work_items, rows: 4, placeholder: "例：点穴を掘る、浅溝を調整する", class: "block shadow-sm rounded-md border border-gray-400 px-3 py-2 mt-2 w-full focus:outline-blue-600" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :intent, "意図・仮説", class: "block font-medium text-gray-700" %>
+    <%= form.textarea :intent, rows: 4, class: "block shadow-sm rounded-md border border-gray-400 px-3 py-2 mt-2 w-full focus:outline-blue-600" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :observations, "施工後の観察", class: "block font-medium text-gray-700" %>
+    <%= form.textarea :observations, rows: 4, class: "block shadow-sm rounded-md border border-gray-400 px-3 py-2 mt-2 w-full focus:outline-blue-600" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :next_steps, "次回への申し送り", class: "block font-medium text-gray-700" %>
+    <%= form.textarea :next_steps, rows: 3, class: "block shadow-sm rounded-md border border-gray-400 px-3 py-2 mt-2 w-full focus:outline-blue-600" %>
+  </div>
+
+  <div class="my-5 border-t border-gray-200 pt-5">
+    <p class="font-medium text-gray-700 mb-3">費用</p>
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <%= form.label :construction_cost, "施工経費（円）", class: "block text-sm font-medium text-gray-700" %>
+        <%= form.number_field :construction_cost, min: 0, placeholder: "0", class: "block shadow-sm rounded-md border border-gray-400 px-3 py-2 mt-2 w-full focus:outline-blue-600" %>
+      </div>
+      <div>
+        <%= form.label :labor_cost, "人件費（円）", class: "block text-sm font-medium text-gray-700" %>
+        <%= form.number_field :labor_cost, min: 0, placeholder: "0", class: "block shadow-sm rounded-md border border-gray-400 px-3 py-2 mt-2 w-full focus:outline-blue-600" %>
+      </div>
+    </div>
+    <div class="mt-3">
+      <%= form.label :cost_memo, "費用メモ（内訳など）", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.textarea :cost_memo, rows: 2, placeholder: "例：資材代1,500円、作業員2名×3h", class: "block shadow-sm rounded-md border border-gray-400 px-3 py-2 mt-2 w-full focus:outline-blue-600" %>
+    </div>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :photos, "写真（複数可）", class: "block font-medium text-gray-700" %>
+    <%= form.file_field :photos, multiple: true, accept: "image/*", class: "block mt-2 w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-green-50 file:text-green-700 hover:file:bg-green-100" %>
+    <p class="text-xs text-gray-500 mt-1">最大10枚まで</p>
+  </div>
+
+  <div class="mt-6">
+    <%= form.submit "保存する", class: "w-full sm:w-auto rounded-md px-5 py-2.5 bg-green-700 hover:bg-green-600 text-white font-medium cursor-pointer" %>
+  </div>
+<% end %>

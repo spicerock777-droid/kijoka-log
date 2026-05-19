@@ -1,0 +1,113 @@
+<% content_for :title, "見積書 - #{@estimate.subject}" %>
+
+<div class="w-full max-w-3xl">
+  <% if notice.present? %>
+    <p class="py-2 px-3 bg-green-50 mb-4 text-green-500 font-medium rounded-md inline-block"><%= notice %></p>
+  <% end %>
+
+  <div class="mb-4 flex items-center justify-between">
+    <div>
+      <%= link_to "← #{@project.name}", project_path(@project), class: "text-sm text-gray-500 hover:text-gray-700" %>
+    </div>
+    <div class="flex gap-2 no-print">
+      <%= link_to "編集", edit_project_estimate_path(@project, @estimate), class: "text-sm px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-md" %>
+      <%= button_to "削除", project_estimate_path(@project, @estimate), method: :delete, class: "text-sm px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-md cursor-pointer", data: { turbo_confirm: "この見積書を削除しますか？" } %>
+      <button onclick="window.print()" class="text-sm px-3 py-1.5 bg-green-700 text-white hover:bg-green-600 rounded-md">印刷 / PDF</button>
+      <%= link_to "LINEで送る",
+            "https://line.me/R/msg/text/?#{CGI.escape("【御見積書】\n現場：#{@project.name}\n#{@estimate.subject}\n合計：¥#{number_with_delimiter(@estimate.grand_total)}\n\n詳細はこちら：#{request.base_url}/e/#{@estimate.share_token}")}",
+            target: "_blank",
+            class: "text-sm px-3 py-1.5 bg-green-500 text-white hover:bg-green-400 rounded-md" %>
+    </div>
+  </div>
+
+  <%# 見積書本体（印刷用） %>
+  <div class="bg-white border border-gray-200 rounded-lg p-8 shadow-sm" id="estimate-print">
+
+    <div class="text-center text-2xl font-bold text-green-900 border-b-2 border-green-900 pb-4 mb-6" style="font-family: 'Shippori Mincho', serif; letter-spacing: 0.3em;">
+      御　見　積　書
+    </div>
+
+    <div class="flex justify-between items-start mb-6">
+      <div>
+        <div class="text-xs text-green-700 mb-1">お客様名</div>
+        <div class="text-lg font-bold text-green-900 border-b border-green-900 pb-1 min-w-48">
+          <%= @estimate.client_name.presence || "　" %>　様
+        </div>
+      </div>
+      <div class="text-sm space-y-1 text-right">
+        <div><span class="text-gray-500">見積日：</span><%= @estimate.doc_date.strftime("%Y年%-m月%-d日") %></div>
+        <div><span class="text-gray-500">有効期限：</span>発行日より30日間</div>
+        <% if @estimate.doc_number.present? %>
+          <div><span class="text-gray-500">見積番号：</span><%= @estimate.doc_number %></div>
+        <% end %>
+        <div><span class="text-gray-500">現場：</span><span class="font-medium text-green-800"><%= @project.name %></span></div>
+      </div>
+    </div>
+
+    <% if @estimate.subject.present? %>
+      <div class="bg-green-50 border border-green-200 rounded-md px-4 py-2 mb-6 text-sm font-bold text-green-900">
+        件名：<%= @estimate.subject %>
+      </div>
+    <% end %>
+
+    <table class="w-full text-sm mb-4">
+      <thead>
+        <tr class="bg-green-900 text-white">
+          <th class="py-2 px-3 text-left w-2/5">施工内容</th>
+          <th class="py-2 px-3 text-right w-14">数量</th>
+          <th class="py-2 px-3 text-left w-10">単位</th>
+          <th class="py-2 px-3 text-right w-24">単価</th>
+          <th class="py-2 px-3 text-right w-24">金額</th>
+          <th class="py-2 px-3 text-left">備考</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @estimate.items.each do |item| %>
+          <% qty = item["qty"].to_f; price = item["unit_price"].to_f; amt = (qty * price).round %>
+          <tr class="border-b border-gray-100">
+            <td class="py-2 px-3"><%= item["description"] %></td>
+            <td class="py-2 px-3 text-right"><%= qty > 0 ? qty.to_i : "" %></td>
+            <td class="py-2 px-3"><%= item["unit"] %></td>
+            <td class="py-2 px-3 text-right"><%= price > 0 ? number_with_delimiter(price.to_i) : "" %></td>
+            <td class="py-2 px-3 text-right font-medium text-green-800"><%= amt > 0 ? "¥#{number_with_delimiter(amt)}" : "" %></td>
+            <td class="py-2 px-3 text-gray-500 text-xs"><%= item["note"] %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <div class="flex justify-end mb-6">
+      <table class="text-sm w-52">
+        <tr class="border-b border-gray-200">
+          <td class="py-1.5 pr-4 text-gray-500">小計</td>
+          <td class="py-1.5 text-right font-medium">¥<%= number_with_delimiter(@estimate.subtotal) %></td>
+        </tr>
+        <tr class="border-b border-gray-200">
+          <td class="py-1.5 pr-4 text-gray-500">消費税（10%）</td>
+          <td class="py-1.5 text-right font-medium">¥<%= number_with_delimiter(@estimate.tax) %></td>
+        </tr>
+        <tr class="bg-green-900 text-white">
+          <td class="py-2.5 px-3 font-bold">合計金額</td>
+          <td class="py-2.5 px-3 text-right font-bold text-lg">¥<%= number_with_delimiter(@estimate.grand_total) %></td>
+        </tr>
+      </table>
+    </div>
+
+    <% if @estimate.note.present? %>
+      <div class="border border-gray-200 rounded-md p-4 text-sm text-gray-600">
+        <div class="font-bold text-gray-700 mb-1 text-xs">備考・条件</div>
+        <p class="whitespace-pre-wrap"><%= @estimate.note %></p>
+      </div>
+    <% end %>
+
+  </div>
+</div>
+
+<style>
+@media print {
+  .no-print { display: none !important; }
+  nav { display: none !important; }
+  body { background: white; }
+  #estimate-print { border: none; box-shadow: none; padding: 0; }
+}
+</style>

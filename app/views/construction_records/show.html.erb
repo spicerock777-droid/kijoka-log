@@ -1,0 +1,74 @@
+<% content_for :title, "施工記録詳細 - #{@project.name}" %>
+
+<div class="md:w-2/3 w-full">
+  <% if notice.present? %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <div class="mb-6">
+    <%= link_to "← #{@project.name}", project_path(@project), class: "text-sm text-gray-500 hover:text-gray-700" %>
+    <div class="flex items-center gap-3 mt-1">
+      <h1 class="font-bold text-2xl text-green-900"><%= @construction_record.worked_on.strftime("%Y年%-m月%-d日") %></h1>
+      <span class="text-sm bg-green-100 text-green-800 px-3 py-1 rounded-full"><%= @construction_record.site %></span>
+    </div>
+  </div>
+
+  <% [
+    ["施工内容", @construction_record.work_items],
+    ["意図・仮説", @construction_record.intent],
+    ["施工後の観察", @construction_record.observations],
+    ["次回への申し送り", @construction_record.next_steps]
+  ].each do |label, content| %>
+    <% if content.present? %>
+      <div class="mb-5">
+        <h2 class="text-sm font-bold text-gray-500 mb-1"><%= label %></h2>
+        <p class="text-gray-800 whitespace-pre-wrap"><%= content %></p>
+      </div>
+    <% end %>
+  <% end %>
+
+  <% if @construction_record.construction_cost.present? || @construction_record.labor_cost.present? %>
+    <div class="mb-5 bg-gray-50 rounded-lg p-4">
+      <h2 class="text-sm font-bold text-gray-500 mb-2">費用</h2>
+      <div class="flex gap-6 text-sm">
+        <% if @construction_record.construction_cost.present? %>
+          <div>
+            <span class="text-gray-500">施工経費</span>
+            <span class="ml-2 font-medium text-gray-800"><%= number_with_delimiter(@construction_record.construction_cost) %>円</span>
+          </div>
+        <% end %>
+        <% if @construction_record.labor_cost.present? %>
+          <div>
+            <span class="text-gray-500">人件費</span>
+            <span class="ml-2 font-medium text-gray-800"><%= number_with_delimiter(@construction_record.labor_cost) %>円</span>
+          </div>
+        <% end %>
+        <% total = (@construction_record.construction_cost || 0) + (@construction_record.labor_cost || 0) %>
+        <div>
+          <span class="text-gray-500">合計</span>
+          <span class="ml-2 font-bold text-green-800"><%= number_with_delimiter(total) %>円</span>
+        </div>
+      </div>
+      <% if @construction_record.cost_memo.present? %>
+        <p class="text-sm text-gray-600 mt-2 whitespace-pre-wrap"><%= @construction_record.cost_memo %></p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if @construction_record.photos.attached? %>
+    <div class="mb-6">
+      <h2 class="text-sm font-bold text-gray-500 mb-2">写真</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <% @construction_record.photos.each do |photo| %>
+          <%= image_tag photo, class: "w-full h-40 object-cover rounded-md" %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="flex gap-3 mt-6">
+    <%= link_to "編集", edit_project_construction_record_path(@project, @construction_record), class: "rounded-md px-4 py-2 bg-gray-100 hover:bg-gray-200 text-sm font-medium" %>
+    <%= link_to "一覧へ", project_path(@project), class: "rounded-md px-4 py-2 bg-gray-100 hover:bg-gray-200 text-sm font-medium" %>
+    <%= button_to "削除", project_construction_record_path(@project, @construction_record), method: :delete, class: "rounded-md px-4 py-2 text-white bg-red-500 hover:bg-red-400 text-sm font-medium cursor-pointer", data: { turbo_confirm: "この記録を削除しますか？" } %>
+  </div>
+</div>

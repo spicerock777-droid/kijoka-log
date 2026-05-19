@@ -1,0 +1,70 @@
+<% content_for :title, @project.name %>
+
+<div class="w-full">
+  <% if notice.present? %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <%= link_to "← 現場一覧", projects_path, class: "text-sm text-gray-500 hover:text-gray-700" %>
+      <h1 class="font-bold text-2xl text-green-900 mt-1"><%= @project.name %></h1>
+    </div>
+    <div class="flex gap-2">
+      <%= link_to "＋ 見積書", new_project_estimate_path(@project), class: "rounded-md px-4 py-2 bg-green-100 text-green-800 hover:bg-green-200 text-sm font-medium" %>
+      <%= link_to "＋ 新しい記録", new_project_construction_record_path(@project), class: "rounded-md px-4 py-2 bg-green-700 hover:bg-green-600 text-white text-sm font-medium" %>
+    </div>
+  </div>
+
+  <%# 見積書 %>
+  <% estimates = @project.estimates.recent %>
+  <% if estimates.any? %>
+    <div class="mb-6">
+      <div class="flex items-center justify-between mb-2">
+        <h2 class="text-sm font-bold text-gray-500">見積書</h2>
+      </div>
+      <div class="space-y-2">
+        <% estimates.each do |estimate| %>
+          <div class="bg-white rounded-lg border border-green-100 px-4 py-3 flex items-center justify-between">
+            <div>
+              <span class="text-sm font-medium text-green-900"><%= estimate.client_name.presence || "（お客様名未入力）" %></span>
+              <span class="text-xs text-gray-400 ml-2"><%= estimate.doc_date.strftime("%-m/%-d") %></span>
+              <div class="text-xs text-gray-500"><%= estimate.subject %></div>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-sm font-bold text-green-800">¥<%= number_with_delimiter(estimate.grand_total) %></span>
+              <%= link_to "詳細", project_estimate_path(@project, estimate), class: "text-xs text-green-700 hover:underline" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @construction_records.empty? %>
+    <p class="text-center my-10 text-gray-500">まだ記録がありません。</p>
+  <% else %>
+    <div class="space-y-4">
+      <% @construction_records.each do |record| %>
+        <div class="bg-white rounded-lg border border-gray-200 p-5 shadow-sm">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-3">
+              <span class="font-bold text-green-800"><%= record.worked_on.strftime("%Y年%-m月%-d日") %></span>
+              <span class="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full"><%= record.site %></span>
+            </div>
+            <div class="flex gap-2">
+              <%= link_to "詳細", project_construction_record_path(@project, record), class: "text-sm text-green-700 hover:underline" %>
+              <%= link_to "編集", edit_project_construction_record_path(@project, record), class: "text-sm text-gray-500 hover:underline" %>
+            </div>
+          </div>
+          <% if record.work_items.present? %>
+            <p class="text-sm text-gray-700 mt-1"><%= record.work_items.truncate(100) %></p>
+          <% end %>
+          <% if record.photos.attached? %>
+            <p class="text-xs text-gray-400 mt-2">📷 <%= record.photos.count %>枚</p>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

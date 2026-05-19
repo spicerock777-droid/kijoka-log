@@ -1,0 +1,24 @@
+databases:
+  - name: kijoka-log-db
+    databaseName: kijoka_log_production
+    user: kijoka_log
+    plan: free
+
+services:
+  - type: web
+    name: kijoka-log
+    env: ruby
+    plan: free
+    buildCommand: "./bin/render-build.sh"
+    startCommand: "bundle exec rails server -b 0.0.0.0"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: kijoka-log-db
+          property: connectionString
+      - key: RAILS_MASTER_KEY
+        sync: false
+      - key: RAILS_ENV
+        value: production
+      - key: RAILS_LOG_TO_STDOUT
+        value: "true"

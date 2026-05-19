@@ -1,0 +1,14 @@
+<% content_for :title, "現場一覧" %>
+
+<div class="w-full">
+  <h1 class="font-bold text-2xl text-green-900 mb-6">現場一覧</h1>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <% @projects.each do |project| %>
+      <%= link_to project_path(project), class: "block bg-white rounded-lg border border-gray-200 p-5 shadow-sm hover:border-green-400 hover:shadow-md transition" do %>
+        <h2 class="font-bold text-lg text-green-800"><%= project.name %></h2>
+        <p class="text-sm text-gray-500 mt-1"><%= project.construction_records.count %>件の記録</p>
+      <% end %>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,9 @@
+<% content_for :title, "見積書を編集 - #{@project.name}" %>
+
+<div class="w-full max-w-3xl">
+  <div class="mb-6">
+    <%= link_to "← 見積書詳細", project_estimate_path(@project, @estimate), class: "text-sm text-gray-500 hover:text-gray-700" %>
+    <h1 class="font-bold text-2xl text-green-900 mt-1">見積書を編集</h1>
+  </div>
+  <%= render "form", estimate: @estimate %>
+</div>

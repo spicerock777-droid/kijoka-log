@@ -1,0 +1,93 @@
+<%= form_with(model: [@project, estimate], data: { controller: "estimate-items" }) do |form| %>
+  <% if estimate.errors.any? %>
+    <div class="bg-red-50 text-red-500 px-3 py-2 rounded-md mb-4">
+      <ul class="list-disc ml-4">
+        <% estimate.errors.each do |e| %>
+          <li><%= e.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= form.hidden_field :items_json, data: { "estimate-items-target": "json" } %>
+
+  <%# 基本情報 %>
+  <div class="space-y-4 mb-6">
+    <div>
+      <%= form.label :client_name, "お客様名", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= form.text_field :client_name, class: "block w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm focus:outline-green-600" %>
+    </div>
+    <div>
+      <%= form.label :subject, "現場・件名", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= form.text_field :subject, placeholder: "例：K翔 駐車場 水脈整備工事", class: "block w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm focus:outline-green-600" %>
+    </div>
+    <div class="grid grid-cols-2 gap-3">
+      <div>
+        <%= form.label :doc_date, "見積日", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= form.date_field :doc_date, class: "block w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm focus:outline-green-600" %>
+      </div>
+      <div>
+        <%= form.label :doc_number, "見積番号", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= form.text_field :doc_number, class: "block w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm focus:outline-green-600" %>
+      </div>
+    </div>
+  </div>
+
+  <%# 明細 %>
+  <div class="mb-4">
+    <div class="flex items-center justify-between mb-3">
+      <span class="text-sm font-medium text-gray-700">明細</span>
+      <button type="button"
+        class="text-sm px-4 py-2 bg-green-700 text-white rounded-md hover:bg-green-600 active:bg-green-800"
+        data-action="click->estimate-items#addRow">＋ 行を追加</button>
+    </div>
+    <div class="space-y-3" data-estimate-items-target="list"></div>
+  </div>
+
+  <%# 合計 %>
+  <div class="flex justify-end mb-6">
+    <div class="w-full max-w-xs bg-gray-50 border border-gray-200 rounded-lg overflow-hidden">
+      <div class="flex justify-between px-4 py-2.5 border-b border-gray-200 text-sm">
+        <span class="text-gray-500">小計</span>
+        <span class="font-medium" data-estimate-items-target="subtotal">¥0</span>
+      </div>
+      <div class="flex justify-between px-4 py-2.5 border-b border-gray-200 text-sm">
+        <span class="text-gray-500">消費税（10%）</span>
+        <span class="font-medium" data-estimate-items-target="tax">¥0</span>
+      </div>
+      <div class="flex justify-between px-4 py-3 bg-green-900 text-white">
+        <span class="font-bold">合計金額</span>
+        <span class="font-bold text-lg" data-estimate-items-target="total">¥0</span>
+      </div>
+    </div>
+  </div>
+
+  <%# 備考 %>
+  <div class="mb-6">
+    <%= form.label :note, "備考・条件", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= form.textarea :note, rows: 3,
+        placeholder: "・材料費は別途実費となります\n・施工後に写真記録と観察レポートをお渡しします",
+        class: "block w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm focus:outline-green-600" %>
+  </div>
+
+  <div>
+    <%= form.submit "保存する", class: "w-full rounded-md px-5 py-3 bg-green-700 hover:bg-green-600 text-white font-medium cursor-pointer text-base" %>
+  </div>
+<% end %>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  function tryLoad() {
+    const el = document.querySelector("[data-controller='estimate-items']")
+    if (!el) return
+    const items = <%= raw estimate.items.to_json %>
+    const ctrl = window.Stimulus?.getControllerForElementAndIdentifier(el, "estimate-items")
+    if (ctrl) {
+      ctrl.loadItems(items.length > 0 ? items : Array(4).fill({}))
+    } else {
+      setTimeout(tryLoad, 100)
+    }
+  }
+  setTimeout(tryLoad, 50)
+})
+</script>
