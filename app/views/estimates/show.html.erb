@@ -59,59 +59,54 @@
       </div>
     <% end %>
 
-    <%# 明細テーブル %>
-    <table class="w-full text-sm mb-8">
-      <thead>
-        <tr class="border-b border-gray-300">
-          <th class="pb-2.5 px-2 text-left text-xs font-normal text-gray-400 tracking-wider w-5/12">施工内容</th>
-          <th class="pb-2.5 px-2 text-right text-xs font-normal text-gray-400 tracking-wider w-10">数量</th>
-          <th class="pb-2.5 px-2 text-left text-xs font-normal text-gray-400 tracking-wider w-8">単位</th>
-          <th class="pb-2.5 px-2 text-right text-xs font-normal text-gray-400 tracking-wider w-24">単価</th>
-          <th class="pb-2.5 px-2 text-right text-xs font-normal text-gray-400 tracking-wider w-24">金額</th>
-          <th class="pb-2.5 px-2 text-left text-xs font-normal text-gray-400 tracking-wider">備考</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @estimate.items.each do |item| %>
-          <% qty = item["qty"].to_f; price = item["unit_price"].to_f %>
-          <% unit_prices = item["unit_prices"] %>
-          <% multi = unit_prices.present? && unit_prices.length > 1 %>
-          <% amt = multi ? unit_prices.sum { |p| p.to_f.round } : (qty * price).round %>
-          <% mats = item["materials"].presence || (item["material_name"].present? ? [{"name"=>item["material_name"],"cost"=>item["material_cost"]}] : []) %>
-          <% mats = mats.select { |m| m["name"].present? || m["cost"].to_i > 0 } %>
-          <% has_sub = multi || mats.any? %>
-          <tr class="<%= has_sub ? "" : "border-b border-gray-100" %>">
-            <td class="py-3.5 px-2 text-gray-700"><%= item["description"] %></td>
-            <td class="py-3.5 px-2 text-right text-gray-500"><%= qty > 0 ? qty.to_i : "" %></td>
-            <td class="py-3.5 px-2 text-gray-400"><%= item["unit"] %></td>
-            <td class="py-3.5 px-2 text-right text-gray-400"><%= multi ? "個別" : (price > 0 ? number_with_delimiter(price.to_i) : "") %></td>
-            <td class="py-3.5 px-2 text-right text-gray-700 font-medium"><%= amt > 0 ? "¥#{number_with_delimiter(amt)}" : "" %></td>
-            <td class="py-3.5 px-2 text-gray-400 text-xs"><%= item["note"] %></td>
-          </tr>
-          <% if multi %>
-            <% unit_prices.each_with_index do |p, i| %>
-              <% last_sub = !mats.any? && i == unit_prices.length - 1 %>
-              <tr class="<%= last_sub ? "border-b border-gray-100" : "" %>">
-                <td class="pb-2 pl-6 pr-2 text-xs text-gray-400" colspan="3">
-                  <span class="border-l border-gray-300 pl-2.5"><%= i + 1 %>人目</span>
-                </td>
-                <td class="pb-2 px-2 text-right text-xs text-gray-400">¥<%= number_with_delimiter(p.to_f.round) %></td>
-                <td colspan="2"></td>
-              </tr>
+    <%# 明細 %>
+    <div class="mb-8">
+      <div class="flex justify-between pb-2.5 border-b border-gray-300 text-xs text-gray-400 tracking-wider">
+        <span>施工内容</span>
+        <span>金額</span>
+      </div>
+      <% @estimate.items.each do |item| %>
+        <% qty = item["qty"].to_f; price = item["unit_price"].to_f %>
+        <% unit_prices = item["unit_prices"] %>
+        <% multi = unit_prices.present? && unit_prices.length > 1 %>
+        <% amt = multi ? unit_prices.sum { |p| p.to_f.round } : (qty * price).round %>
+        <% mats = item["materials"].presence || (item["material_name"].present? ? [{"name"=>item["material_name"],"cost"=>item["material_cost"]}] : []) %>
+        <% mats = mats.select { |m| m["name"].present? || m["cost"].to_i > 0 } %>
+        <div class="py-3.5 border-b border-gray-100">
+          <div class="flex justify-between items-baseline gap-4">
+            <span class="text-sm text-gray-700 font-medium"><%= item["description"] %></span>
+            <span class="text-sm font-medium text-gray-800 flex-shrink-0"><%= amt > 0 ? "¥#{number_with_delimiter(amt)}" : "" %></span>
+          </div>
+          <% if item["note"].present? %>
+            <div class="mt-0.5 text-xs text-gray-400 italic"><%= item["note"] %></div>
+          <% end %>
+          <div class="mt-1.5 space-y-0.5">
+            <% unless multi %>
+              <% if qty > 0 || price > 0 %>
+                <div class="flex justify-between text-xs text-gray-400 border-l border-gray-200 pl-2.5">
+                  <span><%= qty > 0 ? "#{qty % 1 == 0 ? qty.to_i : qty} #{item["unit"]}" : "" %></span>
+                  <span><%= price > 0 ? "¥#{number_with_delimiter(price.to_i)}" : "" %></span>
+                </div>
+              <% end %>
             <% end %>
-          <% end %>
-          <% mats.each_with_index do |m, j| %>
-            <tr class="<%= j == mats.length - 1 ? "border-b border-gray-100" : "" %>">
-              <td class="pb-2 pl-6 pr-2 text-xs text-gray-400" colspan="3">
-                <span class="border-l border-stone-300 pl-2.5">資材：<%= m["name"].presence || "—" %><%= m["qty"].present? ? "　#{m["qty"]}個" : "" %></span>
-              </td>
-              <td class="pb-2 px-2 text-right text-xs text-gray-400"><%= m["cost"].to_i > 0 ? "¥#{number_with_delimiter(m["cost"].to_i)}" : "" %></td>
-              <td colspan="2"></td>
-            </tr>
-          <% end %>
-        <% end %>
-      </tbody>
-    </table>
+            <% if multi %>
+              <% unit_prices.each_with_index do |p, i| %>
+                <div class="flex justify-between text-xs text-gray-400 border-l border-gray-200 pl-2.5">
+                  <span><%= i + 1 %>人目</span>
+                  <span>¥<%= number_with_delimiter(p.to_f.round) %></span>
+                </div>
+              <% end %>
+            <% end %>
+            <% mats.each do |m| %>
+              <div class="flex justify-between text-xs text-gray-400 border-l border-stone-300 pl-2.5">
+                <span>資材：<%= m["name"].presence || "—" %><%= m["qty"].present? ? "　#{m["qty"]}個" : "" %></span>
+                <span><%= m["cost"].to_i > 0 ? "¥#{number_with_delimiter(m["cost"].to_i)}" : "" %></span>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
 
     <%# 合計 %>
     <div class="flex justify-end mb-8">

@@ -54,42 +54,41 @@
           <% mats = mats.select { |m| m["name"].present? || m["cost"].to_i > 0 } %>
 
           <div class="py-3 border-b border-gray-100 last:border-b-0">
-            <div class="flex justify-between items-start gap-2">
-              <div>
-                <div class="text-sm text-gray-700 font-medium"><%= item["description"] %></div>
-                <div class="text-xs text-gray-400 mt-0.5">
-                  <%= qty > 0 ? "#{qty.to_i} #{item["unit"]}" : "" %>
-                  <%= multi ? "（個別単価）" : (price > 0 ? "× ¥#{number_with_delimiter(price.to_i)}" : "") %>
-                </div>
-              </div>
-              <div class="text-base font-bold text-gray-800 flex-shrink-0"><%= amt > 0 ? "¥#{number_with_delimiter(amt)}" : "" %></div>
+            <div class="flex justify-between items-baseline gap-4">
+              <span class="text-sm text-gray-700 font-medium"><%= item["description"] %></span>
+              <span class="text-sm font-bold text-gray-800 flex-shrink-0"><%= amt > 0 ? "¥#{number_with_delimiter(amt)}" : "" %></span>
             </div>
 
-            <% if multi %>
-              <div class="mt-2 space-y-1">
+            <% if item["note"].present? %>
+              <div class="mt-0.5 text-xs text-gray-400 italic"><%= item["note"] %></div>
+            <% end %>
+
+            <div class="mt-1.5 space-y-0.5">
+              <% unless multi %>
+                <% if qty > 0 || price > 0 %>
+                  <div class="flex justify-between text-xs text-gray-400 border-l border-gray-200 pl-2.5">
+                    <span><%= qty > 0 ? "#{qty % 1 == 0 ? qty.to_i : qty} #{item["unit"]}" : "" %></span>
+                    <span><%= price > 0 ? "¥#{number_with_delimiter(price.to_i)}" : "" %></span>
+                  </div>
+                <% end %>
+              <% end %>
+              <% if multi %>
                 <% unit_prices.each_with_index do |p, i| %>
-                  <div class="flex justify-between text-xs text-gray-400 border-l border-gray-300 pl-3">
+                  <div class="flex justify-between text-xs text-gray-400 border-l border-gray-200 pl-2.5">
                     <span><%= i + 1 %>人目</span>
                     <span>¥<%= number_with_delimiter(p.to_f.round) %></span>
                   </div>
                 <% end %>
-              </div>
-            <% end %>
+              <% end %>
 
-            <% if mats.any? %>
-              <div class="mt-2 space-y-1">
-                <% mats.each do |m| %>
-                  <div class="flex justify-between text-xs text-gray-400 border-l border-stone-300 pl-3">
-                    <span>資材：<%= m["name"].presence || "—" %><%= m["qty"].present? ? "　#{m["qty"]}個" : "" %></span>
-                    <span><%= m["cost"].to_i > 0 ? "¥#{number_with_delimiter(m["cost"].to_i)}" : "" %></span>
-                  </div>
-                <% end %>
-              </div>
-            <% end %>
+              <% mats.each do |m| %>
+                <div class="flex justify-between text-xs text-gray-400 border-l border-stone-300 pl-2.5">
+                  <span>資材：<%= m["name"].presence || "—" %><%= m["qty"].present? ? "　#{m["qty"]}個" : "" %></span>
+                  <span><%= m["cost"].to_i > 0 ? "¥#{number_with_delimiter(m["cost"].to_i)}" : "" %></span>
+                </div>
+              <% end %>
+            </div>
 
-            <% if item["note"].present? %>
-              <div class="text-xs text-gray-400 mt-1.5 italic"><%= item["note"] %></div>
-            <% end %>
           </div>
         <% end %>
       </div>
