@@ -1,0 +1,82 @@
+<% content_for :title, "WSログ - #{@ws_log.title}" %>
+
+<div class="w-full max-w-2xl">
+  <% if notice.present? %>
+    <p class="py-2 px-3 bg-green-50 mb-4 text-green-600 font-medium rounded-md text-sm"><%= notice %></p>
+  <% end %>
+
+  <div class="flex items-center justify-between mb-4">
+    <%= link_to "← #{@project.name}", project_path(@project), class: "text-sm text-gray-500 hover:text-gray-700" %>
+    <div class="flex gap-2">
+      <%= link_to "編集", edit_project_ws_log_path(@project, @ws_log), class: "text-sm px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-md" %>
+      <%= button_to "削除", project_ws_log_path(@project, @ws_log), method: :delete,
+          class: "text-sm px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-md cursor-pointer",
+          data: { turbo_confirm: "削除しますか？" } %>
+    </div>
+  </div>
+
+  <div class="bg-white border border-gray-200 rounded-lg p-5 shadow-sm space-y-5">
+
+    <div class="flex items-start justify-between">
+      <div>
+        <div class="text-xs text-green-700 mb-1"><%= @project.name %></div>
+        <h1 class="text-xl font-bold text-green-900"><%= @ws_log.title %></h1>
+      </div>
+      <div class="text-right text-sm text-gray-500 flex-shrink-0 ml-4">
+        <div class="font-medium text-green-800"><%= @ws_log.held_on.strftime("%Y年%-m月%-d日") %></div>
+        <% if @ws_log.participants_count.present? %>
+          <div class="text-lg font-bold text-green-900 mt-1"><%= @ws_log.participants_count %>名</div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="flex gap-3 text-xs">
+      <% if @ws_log.weather.present? %>
+        <span class="bg-blue-50 text-blue-700 px-2 py-1 rounded-full">☁️ <%= @ws_log.weather %></span>
+      <% end %>
+      <% if @ws_log.participant_notes.present? %>
+        <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded-full"><%= @ws_log.participant_notes %></span>
+      <% end %>
+    </div>
+
+    <% if @ws_log.content.present? %>
+      <div>
+        <div class="text-xs font-bold text-gray-500 mb-1">内容・プログラム</div>
+        <p class="text-sm text-gray-700 whitespace-pre-wrap"><%= @ws_log.content %></p>
+      </div>
+    <% end %>
+
+    <% if @ws_log.reflection.present? %>
+      <div class="bg-green-50 rounded-lg p-4">
+        <div class="text-xs font-bold text-green-700 mb-1">振り返り・気づき</div>
+        <p class="text-sm text-green-900 whitespace-pre-wrap"><%= @ws_log.reflection %></p>
+      </div>
+    <% end %>
+
+    <% if @ws_log.reactions.present? %>
+      <div>
+        <div class="text-xs font-bold text-gray-500 mb-1">参加者の反応</div>
+        <p class="text-sm text-gray-700 whitespace-pre-wrap"><%= @ws_log.reactions %></p>
+      </div>
+    <% end %>
+
+    <% if @ws_log.improvements.present? %>
+      <div class="bg-amber-50 rounded-lg p-4">
+        <div class="text-xs font-bold text-amber-700 mb-1">次回への改善点</div>
+        <p class="text-sm text-amber-900 whitespace-pre-wrap"><%= @ws_log.improvements %></p>
+      </div>
+    <% end %>
+
+    <% if @ws_log.photos.attached? %>
+      <div>
+        <div class="text-xs font-bold text-gray-500 mb-2">写真</div>
+        <div class="grid grid-cols-2 gap-2">
+          <% @ws_log.photos.each do |photo| %>
+            <%= image_tag photo, class: "w-full h-36 object-cover rounded-lg" %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+  </div>
+</div>

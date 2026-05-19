@@ -1,0 +1,66 @@
+<%= form_with(model: [@project, ws_log]) do |f| %>
+  <% if ws_log.errors.any? %>
+    <div class="bg-red-50 text-red-500 px-3 py-2 rounded-md mb-4 text-sm">
+      <% ws_log.errors.each do |e| %><div><%= e.full_message %></div><% end %>
+    </div>
+  <% end %>
+
+  <div class="space-y-4">
+    <div class="grid grid-cols-2 gap-3">
+      <div>
+        <%= f.label :held_on, "開催日", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= f.date_field :held_on, class: "block w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm focus:outline-green-600" %>
+      </div>
+      <div>
+        <%= f.label :participants_count, "参加人数", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= f.number_field :participants_count, min: 0, class: "block w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm focus:outline-green-600", placeholder: "0" %>
+      </div>
+    </div>
+
+    <div>
+      <%= f.label :title, "タイトル / テーマ", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.text_field :title, class: "block w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm focus:outline-green-600", placeholder: "例：水脈整備ワークショップ" %>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3">
+      <div>
+        <%= f.label :weather, "天候", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= f.text_field :weather, class: "block w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm focus:outline-green-600", placeholder: "晴れ・曇りなど" %>
+      </div>
+      <div>
+        <%= f.label :participant_notes, "参加者属性", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= f.text_field :participant_notes, class: "block w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm focus:outline-green-600", placeholder: "地域住民、農家など" %>
+      </div>
+    </div>
+
+    <div>
+      <%= f.label :content, "内容・プログラム", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.text_area :content, rows: 4, class: "block w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm focus:outline-green-600", placeholder: "当日やったこと" %>
+    </div>
+
+    <div>
+      <%= f.label :reflection, "振り返り・気づき", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.text_area :reflection, rows: 3, class: "block w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm focus:outline-green-600" %>
+    </div>
+
+    <div>
+      <%= f.label :reactions, "参加者の反応", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.text_area :reactions, rows: 3, class: "block w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm focus:outline-green-600", placeholder: "盛り上がった点、難しかった点など" %>
+    </div>
+
+    <div>
+      <%= f.label :improvements, "次回への改善点", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.text_area :improvements, rows: 2, class: "block w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm focus:outline-green-600" %>
+    </div>
+
+    <div>
+      <%= f.label :photos, "写真", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.file_field :photos, multiple: true, accept: "image/*", class: "block w-full text-sm text-gray-500" %>
+    </div>
+  </div>
+
+  <div class="mt-6">
+    <%= f.submit ws_log.new_record? ? "保存する" : "更新する",
+        class: "w-full rounded-md px-5 py-3 bg-green-700 hover:bg-green-600 text-white font-medium cursor-pointer text-base" %>
+  </div>
+<% end %>

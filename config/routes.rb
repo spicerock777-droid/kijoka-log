@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   resources :projects, only: [:index, :show] do
     resources :construction_records, except: [:index]
     resources :estimates, except: [:index]
+    resources :ws_logs, except: [:index]
   end
   get "estimates", to: "estimates#index", as: :estimates
   get "e/:token", to: "estimates#public_show", as: :public_estimate
