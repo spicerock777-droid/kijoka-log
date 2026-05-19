@@ -35,7 +35,11 @@ export default class extends Controller {
     this.recalc()
   }
 
-  update() {
+  update(e) {
+    if (e?.target?.classList.contains("inp-qty")) {
+      const card = e.target.closest(".item-card")
+      if (card) this.updatePriceFields(card)
+    }
     this.syncJson()
     this.recalc()
   }
@@ -58,6 +62,33 @@ export default class extends Controller {
     this.recalc()
   }
 
+  // 数量に合わせて単価欄の数を調整する
+  updatePriceFields(card) {
+    const qty = parseInt(card.querySelector(".inp-qty").value, 10)
+    const list = card.querySelector(".price-list")
+    const inputs = list.querySelectorAll(".price-row-input")
+    const target = (!isNaN(qty) && qty >= 2) ? qty : 1
+
+    if (target > inputs.length) {
+      for (let i = inputs.length; i < target; i++) {
+        list.appendChild(this.buildPriceInput(""))
+      }
+    } else if (target < inputs.length) {
+      Array.from(inputs).slice(target).forEach(el => el.remove())
+    }
+  }
+
+  buildPriceInput(value = "") {
+    const input = document.createElement("input")
+    input.type = "text"
+    input.inputMode = "numeric"
+    input.className = "price-row-input block w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-right focus:outline-green-600 bg-white"
+    input.value = value
+    input.placeholder = "25,000"
+    input.setAttribute("data-action", "input->estimate-items#update")
+    return input
+  }
+
   syncJson() {
     const cards = this.listTarget.querySelectorAll(".item-card")
     const items = Array.from(cards).map(card => {
@@ -66,11 +97,16 @@ export default class extends Controller {
         qty:  row.querySelector(".inp-material-qty").value,
         cost: row.querySelector(".inp-material-cost").value.replace(/,/g, "")
       }))
+      const priceInputs = Array.from(card.querySelectorAll(".price-row-input"))
+      const prices = priceInputs.map(el => el.value.replace(/,/g, ""))
+      const unit_price = prices[0] || ""
+      const unit_prices = prices.length > 1 ? prices : undefined
       return {
         description: card.querySelector(".inp-desc").value,
         qty:         card.querySelector(".inp-qty").value,
         unit:        card.querySelector(".inp-unit").value,
-        unit_price:  card.querySelector(".inp-price").value.replace(/,/g, ""),
+        unit_price,
+        unit_prices,
         note:        card.querySelector(".inp-note").value,
         materials
       }
@@ -83,9 +119,17 @@ export default class extends Controller {
     let workSubtotal = 0
     let materialSubtotal = 0
     this.listTarget.querySelectorAll(".item-card").forEach(card => {
-      const qty   = parseFloat(card.querySelector(".inp-qty").value) || 0
-      const price = parseFloat(card.querySelector(".inp-price").value.replace(/,/g, "")) || 0
-      const amt   = Math.round(qty * price)
+      const priceInputs = Array.from(card.querySelectorAll(".price-row-input"))
+      let amt
+      if (priceInputs.length > 1) {
+        amt = Math.round(priceInputs.reduce((sum, el) => {
+          return sum + (parseFloat(el.value.replace(/,/g, "")) || 0)
+        }, 0))
+      } else {
+        const qty   = parseFloat(card.querySelector(".inp-qty").value) || 0
+        const price = parseFloat(priceInputs[0]?.value.replace(/,/g, "")) || 0
+        amt = Math.round(qty * price)
+      }
       card.querySelector(".cell-amount").textContent = amt > 0 ? "¥" + amt.toLocaleString("ja-JP") : "—"
       workSubtotal += amt
       card.querySelectorAll(".material-row").forEach(row => {
@@ -158,9 +202,7 @@ export default class extends Controller {
       <div class="grid grid-cols-2 gap-2">
         <div>
           <label class="text-xs text-gray-500">単価（円）</label>
-          <input type="text" inputmode="numeric" class="inp-price mt-0.5 block w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-right focus:outline-green-600 bg-white"
-            value="${item.unit_price || ""}" placeholder="25,000"
-            data-action="input->estimate-items#update">
+          <div class="price-list mt-0.5 space-y-1"></div>
         </div>
         <div>
           <label class="text-xs text-gray-500">施工費</label>
@@ -186,10 +228,19 @@ export default class extends Controller {
           data-action="click->estimate-items#removeRow">この行を削除</button>
       </div>
     `
-    // 既存の資材データを読み込む
+
+    // 単価欄：unit_prices配列があればその数だけ、なければ1つ
+    const priceList = div.querySelector(".price-list")
+    const unit_prices = (item.unit_prices && item.unit_prices.length > 1)
+      ? item.unit_prices
+      : [item.unit_price || ""]
+    unit_prices.forEach(p => priceList.appendChild(this.buildPriceInput(p)))
+
+    // 資材行
     const materials = item.materials || (item.material_name ? [{ name: item.material_name, cost: item.material_cost }] : [])
-    const list = div.querySelector(".material-list")
-    materials.forEach(m => list.appendChild(this.buildMaterialRow(m)))
+    const matList = div.querySelector(".material-list")
+    materials.forEach(m => matList.appendChild(this.buildMaterialRow(m)))
+
     return div
   }
 

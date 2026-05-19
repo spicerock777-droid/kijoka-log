@@ -12,7 +12,14 @@ class Estimate < ApplicationRecord
   }
 
   def work_subtotal
-    items.sum { |item| (item["qty"].to_f * item["unit_price"].to_f).round }
+    items.sum do |item|
+      prices = item["unit_prices"]
+      if prices.present? && prices.length > 1
+        prices.sum { |p| p.to_f.round }
+      else
+        (item["qty"].to_f * item["unit_price"].to_f).round
+      end
+    end
   end
 
   def material_subtotal
