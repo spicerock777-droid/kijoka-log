@@ -28,6 +28,11 @@ projects_data = [
     name: "HanaY fam",
     slug: "hanay-fam",
     sites: ["スロープ予定地", "その他"]
+  },
+  {
+    name: "G-HOUSE",
+    slug: "g-house",
+    sites: ["全体", "その他"]
   }
 ]
 
