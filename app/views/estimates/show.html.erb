@@ -35,18 +35,19 @@
   </div>
 
   <%# 見積書本体（印刷用） %>
-  <div class="border border-gray-100 rounded-xl p-10 shadow-sm" id="estimate-print" style="-webkit-print-color-adjust: exact; print-color-adjust: exact;">
+  <div class="bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden" id="estimate-print" style="-webkit-print-color-adjust: exact; print-color-adjust: exact;">
 
     <%# タイトル %>
-    <div class="text-center mb-8">
+    <div class="text-center py-8 px-10 mb-0" id="estimate-title">
       <p class="text-xs tracking-widest text-gray-400 mb-2">ESTIMATE</p>
       <h1 class="text-2xl font-medium text-gray-700" style="font-family: 'Shippori Mincho', serif; letter-spacing: 0.5em;">御　見　積　書</h1>
       <div class="mt-3 flex items-center gap-3 justify-center">
-        <div class="h-px flex-1 bg-gray-200"></div>
-        <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
-        <div class="h-px flex-1 bg-gray-200"></div>
+        <div class="h-px flex-1 bg-gray-300 opacity-40"></div>
+        <div class="w-1.5 h-1.5 rounded-full bg-gray-400 opacity-40"></div>
+        <div class="h-px flex-1 bg-gray-300 opacity-40"></div>
       </div>
     </div>
+    <div class="px-10 pb-10 pt-6">
 
     <%# 宛先・発行情報 %>
     <div class="flex justify-between items-end mb-8">
@@ -155,13 +156,14 @@
       </div>
     <% end %>
 
+    </div><%# /px-10 pb-10 %>
   </div>
 </div>
 
 <style>
-  .theme-aqua   { background: linear-gradient(150deg, #daf4f2 0%, #f0fbf9 50%, #e4f8f5 100%); }
-  .theme-sunset { background: linear-gradient(150deg, #fdeee0 0%, #fdfaf3 55%, #fef3e4 100%); }
-  .theme-forest { background: linear-gradient(150deg, #e4f5e8 0%, #fdf9ef 60%, #e8f5e4 100%); }
+  #estimate-title.theme-aqua   { background: linear-gradient(150deg, #daf4f2 0%, #e8faf8 100%); }
+  #estimate-title.theme-sunset { background: linear-gradient(150deg, #fdeee0 0%, #fdf6ec 100%); }
+  #estimate-title.theme-forest { background: linear-gradient(150deg, #e4f5e8 0%, #eef8f0 100%); }
 @media print {
   .no-print { display: none !important; }
   nav { display: none !important; }
@@ -171,7 +173,7 @@
 </style>
 <script>
   function setTheme(name) {
-    const el = document.getElementById('estimate-print')
+    const el = document.getElementById('estimate-title')
     el.className = el.className.replace(/theme-\w+/g, '')
     el.classList.add('theme-' + name)
     localStorage.setItem('estimate-theme', name)
