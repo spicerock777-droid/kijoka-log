@@ -7,7 +7,13 @@ class ReceiptsController < ApplicationController
   end
 
   def new
-    @receipt = @project.receipts.new(received_on: Date.today)
+    @receipt = @project.receipts.new(
+      received_on:    Date.today,
+      client_name:    params[:client_name],
+      amount:         params[:amount],
+      tadashi:        params[:tadashi],
+      payment_method: params[:payment_method]
+    )
   end
 
   def edit

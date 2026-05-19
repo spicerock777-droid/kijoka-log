@@ -12,6 +12,12 @@
     <div class="flex gap-2 no-print">
       <%= link_to "編集", edit_project_estimate_path(@project, @estimate), class: "text-sm px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-md" %>
       <%= button_to "削除", project_estimate_path(@project, @estimate), method: :delete, class: "text-sm px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-md cursor-pointer", data: { turbo_confirm: "この見積書を削除しますか？" } %>
+      <%= link_to "領収書を作成",
+            new_project_receipt_path(@project,
+              client_name: @estimate.client_name,
+              amount:      @estimate.grand_total,
+              tadashi:     "#{@estimate.subject}施工代として"),
+            class: "text-sm px-3 py-1.5 bg-stone-100 text-stone-700 hover:bg-stone-200 rounded-md" %>
       <button onclick="window.print()" class="text-sm px-3 py-1.5 bg-green-700 text-white hover:bg-green-600 rounded-md">印刷 / PDF</button>
       <%= link_to "LINEで送る",
             "https://line.me/R/msg/text/?#{CGI.escape("【御見積書】\n現場：#{@project.name}\n#{@estimate.subject}\n合計：¥#{number_with_delimiter(@estimate.grand_total)}\n\n詳細はこちら：#{request.base_url}/e/#{@estimate.share_token}")}",
