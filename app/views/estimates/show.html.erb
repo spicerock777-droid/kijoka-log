@@ -29,6 +29,9 @@
             "https://line.me/R/msg/text/?#{CGI.escape("【御見積書】\n現場：#{@project.name}\n#{@estimate.subject}\n合計：¥#{number_with_delimiter(@estimate.grand_total)}\n\n詳細はこちら：#{request.base_url}/e/#{@estimate.share_token}")}",
             target: "_blank",
             class: "text-sm px-3 py-1.5 bg-green-500 text-white hover:bg-green-400 rounded-md" %>
+      <%= link_to "メールで送る",
+            "mailto:?subject=#{CGI.escape("【御見積書】#{@estimate.subject}")}&body=#{CGI.escape("#{@estimate.client_name.presence || ""}様\n\n御見積書をお送りします。\n\n現場：#{@project.name}\n件名：#{@estimate.subject}\n合計金額：¥#{number_with_delimiter(@estimate.grand_total)}\n\n詳細はこちらからご確認ください：\n#{request.base_url}/e/#{@estimate.share_token}\n\nよろしくお願いいたします。")}",
+            class: "text-sm px-3 py-1.5 bg-blue-500 text-white hover:bg-blue-400 rounded-md" %>
     </div>
   </div>
 
