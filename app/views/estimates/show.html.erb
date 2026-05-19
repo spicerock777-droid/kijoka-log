@@ -121,10 +121,12 @@
             <td class="py-2 text-right text-gray-600">¥<%= number_with_delimiter(@estimate.material_subtotal) %></td>
           </tr>
         <% end %>
-        <tr class="border-b border-gray-200">
-          <td class="py-2 pr-6 text-gray-400">消費税（10%）</td>
-          <td class="py-2 text-right text-gray-600">¥<%= number_with_delimiter(@estimate.tax) %></td>
-        </tr>
+        <% if @estimate.apply_tax %>
+          <tr class="border-b border-gray-200">
+            <td class="py-2 pr-6 text-gray-400">消費税（10%）</td>
+            <td class="py-2 text-right text-gray-600">¥<%= number_with_delimiter(@estimate.tax) %></td>
+          </tr>
+        <% end %>
         <tr>
           <td class="pt-4 pr-6 text-gray-700 font-medium tracking-wide" style="letter-spacing: 0.1em;">合　計　金　額</td>
           <td class="pt-4 text-right text-2xl font-bold text-gray-800">¥<%= number_with_delimiter(@estimate.grand_total) %></td>

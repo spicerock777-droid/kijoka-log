@@ -34,6 +34,7 @@ class Estimate < ApplicationRecord
   end
 
   def tax
+    return 0 unless apply_tax
     (subtotal * 0.1).floor
   end
 

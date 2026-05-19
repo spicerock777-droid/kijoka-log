@@ -105,10 +105,14 @@
             <span class="text-gray-600">¥<%= number_with_delimiter(@estimate.material_subtotal) %></span>
           </div>
         <% end %>
-        <div class="flex justify-between text-sm border-b border-gray-100 pb-3">
-          <span class="text-gray-400">消費税（10%）</span>
-          <span class="text-gray-600">¥<%= number_with_delimiter(@estimate.tax) %></span>
-        </div>
+        <% if @estimate.apply_tax %>
+          <div class="flex justify-between text-sm border-b border-gray-100 pb-3">
+            <span class="text-gray-400">消費税（10%）</span>
+            <span class="text-gray-600">¥<%= number_with_delimiter(@estimate.tax) %></span>
+          </div>
+        <% else %>
+          <div class="border-b border-gray-100 pb-3"></div>
+        <% end %>
         <div class="flex justify-between items-end pt-1">
           <span class="text-sm text-gray-600 font-medium tracking-wide" style="letter-spacing: 0.05em;">合　計　金　額</span>
           <span class="text-2xl font-bold text-gray-800">¥<%= number_with_delimiter(@estimate.grand_total) %></span>

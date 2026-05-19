@@ -47,6 +47,12 @@
     <div class="space-y-3" data-estimate-items-target="list"></div>
   </div>
 
+  <%# 消費税 %>
+  <div class="flex items-center gap-3 mb-4">
+    <%= form.check_box :apply_tax, class: "w-4 h-4 accent-green-700 cursor-pointer", id: "apply_tax" %>
+    <%= form.label :apply_tax, "消費税（10%）を加算する", class: "text-sm text-gray-700 cursor-pointer", for: "apply_tax" %>
+  </div>
+
   <%# 合計 %>
   <div class="flex justify-end mb-6">
     <div class="w-full max-w-xs bg-gray-50 border border-gray-200 rounded-lg overflow-hidden">

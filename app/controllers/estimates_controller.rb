@@ -62,7 +62,7 @@ class EstimatesController < ApplicationController
   end
 
   def estimate_params
-    params.require(:estimate).permit(:client_name, :subject, :doc_date, :doc_number, :note)
+    params.require(:estimate).permit(:client_name, :subject, :doc_date, :doc_number, :note, :apply_tax)
   end
 
   def parse_items
