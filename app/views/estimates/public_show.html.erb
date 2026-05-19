@@ -51,7 +51,7 @@
             <% mats = item["materials"].presence || (item["material_name"].present? ? [{"name"=>item["material_name"],"cost"=>item["material_cost"]}] : []) %>
             <% mats.select { |m| m["name"].present? || m["cost"].to_i > 0 }.each do |m| %>
               <div class="flex justify-between items-center text-xs text-amber-600 mt-1 pt-1 border-t border-amber-100">
-                <span>資材：<%= m["name"].presence || "—" %></span>
+                <span>資材：<%= m["name"].presence || "—" %><%= m["qty"].present? ? "　#{m["qty"]}個" : "" %></span>
                 <span class="font-medium"><%= m["cost"].to_i > 0 ? "¥#{number_with_delimiter(m["cost"].to_i)}" : "" %></span>
               </div>
             <% end %>

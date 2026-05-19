@@ -63,6 +63,7 @@ export default class extends Controller {
     const items = Array.from(cards).map(card => {
       const materials = Array.from(card.querySelectorAll(".material-row")).map(row => ({
         name: row.querySelector(".inp-material-name").value,
+        qty:  row.querySelector(".inp-material-qty").value,
         cost: row.querySelector(".inp-material-cost").value.replace(/,/g, "")
       }))
       return {
@@ -103,18 +104,25 @@ export default class extends Controller {
 
   buildMaterialRow(mat = {}) {
     const div = document.createElement("div")
-    div.className = "material-row grid grid-cols-2 gap-2 items-end"
+    div.className = "material-row grid grid-cols-5 gap-1 items-center"
     div.innerHTML = `
-      <div>
+      <div class="col-span-2">
         <input type="text" class="inp-material-name block w-full border border-amber-200 rounded-md px-2 py-1.5 text-sm focus:outline-amber-400 bg-amber-50"
           value="${mat.name || ""}" placeholder="資材名"
           data-action="input->estimate-items#update">
       </div>
-      <div class="flex gap-1 items-center">
+      <div>
+        <input type="text" inputmode="decimal" class="inp-material-qty block w-full border border-amber-200 rounded-md px-2 py-1.5 text-sm text-right focus:outline-amber-400 bg-amber-50"
+          value="${mat.qty || ""}" placeholder="個数"
+          data-action="input->estimate-items#update">
+      </div>
+      <div>
         <input type="text" inputmode="numeric" class="inp-material-cost block w-full border border-amber-200 rounded-md px-2 py-1.5 text-sm text-right focus:outline-amber-400 bg-amber-50"
           value="${mat.cost || ""}" placeholder="金額"
           data-action="input->estimate-items#update">
-        <button type="button" class="text-gray-300 hover:text-red-400 text-lg leading-none flex-shrink-0"
+      </div>
+      <div class="flex justify-center">
+        <button type="button" class="text-gray-300 hover:text-red-400 text-lg leading-none"
           data-action="click->estimate-items#removeMaterial">×</button>
       </div>
     `
