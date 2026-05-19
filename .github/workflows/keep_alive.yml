@@ -9,4 +9,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Ping kijoka-log
-        run: curl -s https://kijoka-log.onrender.com/up
+        run: curl -s https://kankyousaisei-log.onrender.com/up

@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: kijoka-log
+    name: kankyousaisei-log
     env: ruby
     plan: free
     buildCommand: "./bin/render-build.sh"
