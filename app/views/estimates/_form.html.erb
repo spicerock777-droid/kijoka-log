@@ -1,4 +1,7 @@
-<%= form_with(model: [@project, estimate], data: { controller: "estimate-items" }) do |form| %>
+<%= form_with(model: [@project, estimate], data: {
+  controller: "estimate-items",
+  "estimate-items-existing-value": estimate.items.to_json
+}) do |form| %>
   <% if estimate.errors.any? %>
     <div class="bg-red-50 text-red-500 px-3 py-2 rounded-md mb-4">
       <ul class="list-disc ml-4">
@@ -78,20 +81,3 @@
     <%= form.submit "保存する", class: "w-full rounded-md px-5 py-3 bg-green-700 hover:bg-green-600 text-white font-medium cursor-pointer text-base" %>
   </div>
 <% end %>
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  function tryLoad() {
-    const el = document.querySelector("[data-controller='estimate-items']")
-    if (!el) return
-    const items = <%= raw estimate.items.to_json %>
-    const ctrl = window.Stimulus?.getControllerForElementAndIdentifier(el, "estimate-items")
-    if (ctrl) {
-      ctrl.loadItems(items.length > 0 ? items : Array(4).fill({}))
-    } else {
-      setTimeout(tryLoad, 100)
-    }
-  }
-  setTimeout(tryLoad, 50)
-})
-</script>

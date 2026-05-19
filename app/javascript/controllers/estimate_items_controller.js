@@ -2,9 +2,11 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = ["list", "json", "workSubtotal", "materialSubtotal", "tax", "total"]
+  static values  = { existing: Array }
 
   connect() {
-    this.recalc()
+    const items = this.existingValue
+    this.loadItems(items.length > 0 ? items : Array(4).fill({}))
     this.element.addEventListener("keydown", this.handleEnter.bind(this))
   }
 
