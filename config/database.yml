@@ -85,6 +85,15 @@ test:
 # for a full overview on how database connection configuration can be specified.
 #
 production:
-  adapter: postgresql
-  encoding: unicode
-  url: "<%= ENV['DATABASE_URL'] %>"
+  primary:
+    adapter: postgresql
+    encoding: unicode
+    url: "<%= ENV['DATABASE_URL'] %>"
+  cache:
+    adapter: postgresql
+    encoding: unicode
+    url: "<%= ENV['DATABASE_URL'] %>"
+  cable:
+    adapter: postgresql
+    encoding: unicode
+    url: "<%= ENV['DATABASE_URL'] %>"
