@@ -16,7 +16,10 @@ class Estimate < ApplicationRecord
   end
 
   def material_subtotal
-    items.sum { |item| item["material_cost"].to_i }
+    items.sum do |item|
+      mats = item["materials"].presence || (item["material_cost"].present? ? [{ "cost" => item["material_cost"] }] : [])
+      mats.sum { |m| m["cost"].to_i }
+    end
   end
 
   def subtotal

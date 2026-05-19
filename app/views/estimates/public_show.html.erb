@@ -48,10 +48,11 @@
               <span><%= qty > 0 ? "#{qty.to_i} #{item["unit"]}" : "" %> × ¥<%= number_with_delimiter(price.to_i) %></span>
               <span class="text-base font-bold text-green-800"><%= amt > 0 ? "¥#{number_with_delimiter(amt)}" : "" %></span>
             </div>
-            <% if item["material_name"].present? || mat_cost > 0 %>
+            <% mats = item["materials"].presence || (item["material_name"].present? ? [{"name"=>item["material_name"],"cost"=>item["material_cost"]}] : []) %>
+            <% mats.select { |m| m["name"].present? || m["cost"].to_i > 0 }.each do |m| %>
               <div class="flex justify-between items-center text-xs text-amber-600 mt-1 pt-1 border-t border-amber-100">
-                <span>資材：<%= item["material_name"].presence || "—" %></span>
-                <span class="font-medium"><%= mat_cost > 0 ? "¥#{number_with_delimiter(mat_cost)}" : "" %></span>
+                <span>資材：<%= m["name"].presence || "—" %></span>
+                <span class="font-medium"><%= m["cost"].to_i > 0 ? "¥#{number_with_delimiter(m["cost"].to_i)}" : "" %></span>
               </div>
             <% end %>
             <% if item["note"].present? %>

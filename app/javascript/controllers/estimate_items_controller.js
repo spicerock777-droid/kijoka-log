@@ -46,17 +46,34 @@ export default class extends Controller {
     this.syncJson()
   }
 
+  addMaterial(e) {
+    const card = e.target.closest(".item-card")
+    const list = card.querySelector(".material-list")
+    list.appendChild(this.buildMaterialRow({}))
+  }
+
+  removeMaterial(e) {
+    e.target.closest(".material-row").remove()
+    this.syncJson()
+    this.recalc()
+  }
+
   syncJson() {
     const cards = this.listTarget.querySelectorAll(".item-card")
-    const items = Array.from(cards).map(card => ({
-      description:   card.querySelector(".inp-desc").value,
-      qty:           card.querySelector(".inp-qty").value,
-      unit:          card.querySelector(".inp-unit").value,
-      unit_price:    card.querySelector(".inp-price").value.replace(/,/g, ""),
-      note:          card.querySelector(".inp-note").value,
-      material_name: card.querySelector(".inp-material-name").value,
-      material_cost: card.querySelector(".inp-material-cost").value.replace(/,/g, "")
-    }))
+    const items = Array.from(cards).map(card => {
+      const materials = Array.from(card.querySelectorAll(".material-row")).map(row => ({
+        name: row.querySelector(".inp-material-name").value,
+        cost: row.querySelector(".inp-material-cost").value.replace(/,/g, "")
+      }))
+      return {
+        description: card.querySelector(".inp-desc").value,
+        qty:         card.querySelector(".inp-qty").value,
+        unit:        card.querySelector(".inp-unit").value,
+        unit_price:  card.querySelector(".inp-price").value.replace(/,/g, ""),
+        note:        card.querySelector(".inp-note").value,
+        materials
+      }
+    })
     this.jsonTarget.value = JSON.stringify(items)
   }
 
@@ -65,14 +82,14 @@ export default class extends Controller {
     let workSubtotal = 0
     let materialSubtotal = 0
     this.listTarget.querySelectorAll(".item-card").forEach(card => {
-      const qty  = parseFloat(card.querySelector(".inp-qty").value) || 0
+      const qty   = parseFloat(card.querySelector(".inp-qty").value) || 0
       const price = parseFloat(card.querySelector(".inp-price").value.replace(/,/g, "")) || 0
-      const mat  = parseFloat(card.querySelector(".inp-material-cost").value.replace(/,/g, "")) || 0
-      const amt  = Math.round(qty * price)
-      const amtEl = card.querySelector(".cell-amount")
-      amtEl.textContent = amt > 0 ? "¥" + amt.toLocaleString("ja-JP") : "—"
+      const amt   = Math.round(qty * price)
+      card.querySelector(".cell-amount").textContent = amt > 0 ? "¥" + amt.toLocaleString("ja-JP") : "—"
       workSubtotal += amt
-      materialSubtotal += mat
+      card.querySelectorAll(".material-row").forEach(row => {
+        materialSubtotal += parseFloat(row.querySelector(".inp-material-cost").value.replace(/,/g, "")) || 0
+      })
     })
     const subtotal = workSubtotal + materialSubtotal
     const tax   = Math.floor(subtotal * 0.1)
@@ -82,6 +99,26 @@ export default class extends Controller {
     this.materialSubtotalTarget.textContent = fmt(materialSubtotal)
     this.taxTarget.textContent              = fmt(tax)
     this.totalTarget.textContent            = fmt(total)
+  }
+
+  buildMaterialRow(mat = {}) {
+    const div = document.createElement("div")
+    div.className = "material-row grid grid-cols-2 gap-2 items-end"
+    div.innerHTML = `
+      <div>
+        <input type="text" class="inp-material-name block w-full border border-amber-200 rounded-md px-2 py-1.5 text-sm focus:outline-amber-400 bg-amber-50"
+          value="${mat.name || ""}" placeholder="資材名"
+          data-action="input->estimate-items#update">
+      </div>
+      <div class="flex gap-1 items-center">
+        <input type="text" inputmode="numeric" class="inp-material-cost block w-full border border-amber-200 rounded-md px-2 py-1.5 text-sm text-right focus:outline-amber-400 bg-amber-50"
+          value="${mat.cost || ""}" placeholder="金額"
+          data-action="input->estimate-items#update">
+        <button type="button" class="text-gray-300 hover:text-red-400 text-lg leading-none flex-shrink-0"
+          data-action="click->estimate-items#removeMaterial">×</button>
+      </div>
+    `
+    return div
   }
 
   buildCard(item = {}) {
@@ -122,19 +159,13 @@ export default class extends Controller {
           <div class="cell-amount mt-0.5 block w-full border border-gray-100 rounded-md px-3 py-2 text-sm text-right font-medium text-green-800 bg-white">—</div>
         </div>
       </div>
-      <div class="grid grid-cols-2 gap-2">
-        <div>
-          <label class="text-xs text-gray-500">資材名</label>
-          <input type="text" class="inp-material-name mt-0.5 block w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-green-600 bg-white"
-            value="${item.material_name || ""}" placeholder="竹、砂利など"
-            data-action="input->estimate-items#update">
+      <div class="space-y-1.5">
+        <div class="flex items-center justify-between">
+          <label class="text-xs text-amber-600">資材</label>
+          <button type="button" class="text-xs text-amber-600 hover:text-amber-800"
+            data-action="click->estimate-items#addMaterial">＋ 資材を追加</button>
         </div>
-        <div>
-          <label class="text-xs text-gray-500">資材費（円）</label>
-          <input type="text" inputmode="numeric" class="inp-material-cost mt-0.5 block w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-right focus:outline-green-600 bg-white"
-            value="${item.material_cost || ""}" placeholder="0"
-            data-action="input->estimate-items#update">
-        </div>
+        <div class="material-list space-y-1.5"></div>
       </div>
       <div>
         <label class="text-xs text-gray-500">備考</label>
@@ -147,6 +178,10 @@ export default class extends Controller {
           data-action="click->estimate-items#removeRow">この行を削除</button>
       </div>
     `
+    // 既存の資材データを読み込む
+    const materials = item.materials || (item.material_name ? [{ name: item.material_name, cost: item.material_cost }] : [])
+    const list = div.querySelector(".material-list")
+    materials.forEach(m => list.appendChild(this.buildMaterialRow(m)))
     return div
   }
 
