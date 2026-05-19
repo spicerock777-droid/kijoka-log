@@ -44,7 +44,7 @@
   <div class="bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden" id="estimate-print" style="-webkit-print-color-adjust: exact; print-color-adjust: exact;">
 
     <%# タイトル %>
-    <div class="text-center pt-8 pb-0 px-10" id="estimate-title">
+    <div class="text-center pt-8 pb-6 px-10" id="estimate-title">
       <p class="text-xs tracking-widest text-gray-400 mb-2">ESTIMATE</p>
       <h1 class="text-2xl font-medium text-gray-700" style="font-family: 'Shippori Mincho', serif; letter-spacing: 0.5em;">御　見　積　書</h1>
       <div class="mt-3 flex items-center gap-3 justify-center">
@@ -167,9 +167,9 @@
 </div>
 
 <style>
-  #estimate-title.theme-aqua   { background: linear-gradient(150deg, #daf4f2 0%, #e8faf8 100%); }
-  #estimate-title.theme-sunset { background: linear-gradient(150deg, #fdeee0 0%, #fdf6ec 100%); }
-  #estimate-title.theme-forest { background: linear-gradient(150deg, #e4f5e8 0%, #eef8f0 100%); }
+  #estimate-print.theme-aqua   { background: linear-gradient(150deg, #daf4f2 0%, #f0fbf9 50%, #e4f8f5 100%); outline: 1.5px solid rgba(80,190,185,0.35); outline-offset: -10px; border-color: #a8dedd !important; }
+  #estimate-print.theme-sunset { background: linear-gradient(150deg, #fdeee0 0%, #fdfaf3 55%, #fef3e4 100%); outline: 1.5px solid rgba(220,150,100,0.35); outline-offset: -10px; border-color: #f0c4a0 !important; }
+  #estimate-print.theme-forest { background: linear-gradient(150deg, #e4f5e8 0%, #fdf9ef 60%, #e8f5e4 100%); outline: 1.5px solid rgba(100,180,110,0.35); outline-offset: -10px; border-color: #aaddb0 !important; }
 @media print {
   .no-print { display: none !important; }
   nav { display: none !important; }
@@ -179,7 +179,7 @@
 </style>
 <script>
   function setTheme(name) {
-    const el = document.getElementById('estimate-title')
+    const el = document.getElementById('estimate-print')
     el.className = el.className.replace(/theme-\w+/g, '')
     el.classList.add('theme-' + name)
     localStorage.setItem('estimate-theme', name)
