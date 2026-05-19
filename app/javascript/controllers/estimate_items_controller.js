@@ -158,8 +158,8 @@ export default class extends Controller {
           data-action="input->estimate-items#update">
       </div>
       <div>
-        <input type="text" inputmode="decimal" class="inp-material-qty block w-full border border-amber-200 rounded-md px-2 py-1.5 text-sm text-right focus:outline-amber-400 bg-amber-50"
-          value="${mat.qty || ""}" placeholder="個数"
+        <input type="text" class="inp-material-qty block w-full border border-amber-200 rounded-md px-2 py-1.5 text-sm text-right focus:outline-amber-400 bg-amber-50"
+          value="${mat.qty || ""}" placeholder="個数・本数など"
           data-action="input->estimate-items#update">
       </div>
       <div>
