@@ -23,9 +23,9 @@
   <%# テーマ切替（印刷非表示） %>
   <div class="no-print flex gap-2 mb-3 items-center">
     <span class="text-xs text-gray-400">背景：</span>
-    <button onclick="setTheme('aqua')"   class="theme-btn text-xs px-3 py-1 rounded-full border border-teal-300 text-teal-700 hover:bg-teal-50">珊瑚・浅瀬</button>
-    <button onclick="setTheme('sunset')" class="theme-btn text-xs px-3 py-1 rounded-full border border-orange-300 text-orange-700 hover:bg-orange-50">南国の夕方</button>
-    <button onclick="setTheme('forest')" class="theme-btn text-xs px-3 py-1 rounded-full border border-green-400 text-green-700 hover:bg-green-50">亜熱帯の緑</button>
+    <button onclick="setTheme('aqua')"   data-theme="aqua"   class="theme-btn text-xs px-3 py-1 rounded-full border border-teal-300 text-teal-700 hover:bg-teal-50">珊瑚・浅瀬</button>
+    <button onclick="setTheme('sunset')" data-theme="sunset" class="theme-btn text-xs px-3 py-1 rounded-full border border-orange-300 text-orange-700 hover:bg-orange-50">南国の夕方</button>
+    <button onclick="setTheme('forest')" data-theme="forest" class="theme-btn text-xs px-3 py-1 rounded-full border border-green-400 text-green-700 hover:bg-green-50">亜熱帯の緑</button>
   </div>
 
   <%# 見積書本体（印刷用） %>
@@ -168,8 +168,16 @@
     const el = document.getElementById('estimate-print')
     el.className = el.className.replace(/theme-\w+/g, '')
     el.classList.add('theme-' + name)
+    localStorage.setItem('estimate-theme', name)
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+      btn.classList.toggle('ring-2', btn.dataset.theme === name)
+      btn.classList.toggle('ring-offset-1', btn.dataset.theme === name)
+    })
   }
-  // デフォルト
-  document.addEventListener('turbo:load', () => setTheme('aqua'))
-  document.addEventListener('DOMContentLoaded', () => setTheme('aqua'))
+  function applyTheme() {
+    const saved = localStorage.getItem('estimate-theme') || 'aqua'
+    setTheme(saved)
+  }
+  document.addEventListener('turbo:load', applyTheme)
+  document.addEventListener('DOMContentLoaded', applyTheme)
 </script>
