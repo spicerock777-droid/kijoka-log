@@ -9,4 +9,13 @@ class ProjectsController < ApplicationController
     @project = Project.find_by!(slug: params[:id])
     @construction_records = @project.construction_records.recent
   end
+
+  def gallery
+    @project = Project.find_by!(slug: params[:id])
+    records_with_photos = @project.construction_records
+                                  .order(worked_on: :asc)
+                                  .includes(photos_attachments: :blob)
+                                  .select { |r| r.photos.attached? }
+    @records_by_site = records_with_photos.group_by(&:site)
+  end
 end

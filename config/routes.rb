@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   devise_for :users
   resources :projects, only: [:index, :show] do
+    member { get :gallery }
     resources :construction_records, except: [:index]
     resources :estimates, except: [:index] do
       member { patch :extend_share }
