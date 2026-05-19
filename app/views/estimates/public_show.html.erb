@@ -75,7 +75,7 @@
               <% if multi %>
                 <% unit_prices.each_with_index do |p, i| %>
                   <div class="flex justify-between text-xs text-gray-400 border-l border-gray-200 pl-2.5">
-                    <span><%= i + 1 %>人目</span>
+                    <span>人工<%= %w[① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑩][i] %></span>
                     <span>¥<%= number_with_delimiter(p.to_f.round) %></span>
                   </div>
                 <% end %>
