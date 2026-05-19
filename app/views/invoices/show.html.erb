@@ -1,0 +1,90 @@
+<% content_for :title, "請求書" %>
+
+<div class="w-full max-w-lg">
+  <% if notice.present? %>
+    <p class="py-2 px-3 bg-green-50 mb-4 text-green-500 font-medium rounded-md text-sm"><%= notice %></p>
+  <% end %>
+
+  <div class="mb-4 flex items-center justify-between no-print">
+    <%= link_to "← #{@project.name}", project_path(@project), class: "text-sm text-gray-500 hover:text-gray-700" %>
+    <div class="flex gap-2">
+      <%= link_to "編集", edit_project_invoice_path(@project, @invoice), class: "text-sm px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-md" %>
+      <%= button_to "削除", project_invoice_path(@project, @invoice), method: :delete,
+          class: "text-sm px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-md cursor-pointer",
+          data: { turbo_confirm: "削除しますか？" } %>
+      <button onclick="window.print()" class="text-sm px-3 py-1.5 bg-green-700 text-white hover:bg-green-600 rounded-md">印刷 / PDF</button>
+    </div>
+  </div>
+
+  <div class="bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden" id="invoice-print" style="-webkit-print-color-adjust: exact; print-color-adjust: exact;">
+
+    <div class="text-center py-8 px-10 bg-gradient-to-r from-green-50 to-emerald-50">
+      <p class="text-xs tracking-widest text-gray-400 mb-2">INVOICE</p>
+      <h1 class="text-2xl font-medium text-gray-700" style="font-family: 'Shippori Mincho', serif; letter-spacing: 0.5em;">請　求　書</h1>
+      <div class="mt-3 flex items-center gap-3 justify-center">
+        <div class="h-px flex-1 bg-gray-300 opacity-40"></div>
+        <div class="w-1.5 h-1.5 rounded-full bg-gray-400 opacity-40"></div>
+        <div class="h-px flex-1 bg-gray-300 opacity-40"></div>
+      </div>
+    </div>
+
+    <div class="px-10 py-8 space-y-6">
+
+      <div class="flex justify-between items-end">
+        <div>
+          <div class="text-xs text-gray-400 mb-1.5 tracking-wide">お客様名</div>
+          <div class="text-xl font-medium text-gray-800 border-b border-gray-400 pb-1.5 min-w-52">
+            <%= @invoice.client_name.presence || "　" %>　様
+          </div>
+        </div>
+        <div class="text-xs text-gray-400 space-y-1.5 text-right">
+          <div>請求日：<span class="text-gray-600"><%= @invoice.invoiced_on.strftime("%Y年%-m月%-d日") %></span></div>
+          <% if @invoice.due_date.present? %>
+            <div>支払期限：<span class="text-gray-600"><%= @invoice.due_date.strftime("%Y年%-m月%-d日") %></span></div>
+          <% end %>
+          <div>現場：<span class="text-gray-700 font-medium"><%= @project.name %></span></div>
+        </div>
+      </div>
+
+      <% if @invoice.subject.present? %>
+        <div class="border-l-2 border-gray-300 pl-4 py-0.5">
+          <span class="text-xs text-gray-400">件名</span>
+          <div class="text-sm font-medium text-gray-700 mt-0.5"><%= @invoice.subject %></div>
+        </div>
+      <% end %>
+
+      <div class="text-center py-6 border-y border-gray-200">
+        <div class="text-xs text-gray-400 mb-2 tracking-wide">ご請求金額</div>
+        <div class="text-4xl font-bold text-gray-800" style="font-family: 'Shippori Mincho', serif;">
+          ¥<%= number_with_delimiter(@invoice.amount) %>－
+        </div>
+        <div class="text-xs text-gray-400 mt-1">（税込）</div>
+      </div>
+
+      <div class="text-center text-sm text-gray-500">
+        上記の金額をご請求申し上げます。
+      </div>
+
+      <% if @invoice.note.present? %>
+        <div class="border-t border-gray-100 pt-4 text-xs text-gray-400">
+          <span class="mr-2">備考：</span><%= @invoice.note %>
+        </div>
+      <% end %>
+
+      <div class="text-right text-sm text-gray-500 border-t border-gray-100 pt-4">
+        <div class="font-medium text-gray-700"><%= @project.name %></div>
+        <div class="text-xs text-gray-400 mt-1">環境整備事業</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+@media print {
+  .no-print { display: none !important; }
+  nav { display: none !important; }
+  body { background: white; }
+  #invoice-print { border: none; box-shadow: none; }
+}
+</style>

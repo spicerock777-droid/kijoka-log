@@ -10,9 +10,12 @@ class EstimatesController < ApplicationController
   end
 
   def index
-    @projects = Project.all.order(:name)
+    @projects  = Project.all.order(:name)
+    @tab       = params[:tab] || "estimates"
     @estimates = Estimate.includes(:project).recent
     @estimates = @estimates.search(params[:q]) if params[:q].present?
+    @invoices  = Invoice.includes(:project).recent
+    @receipts  = Receipt.includes(:project).recent
   end
 
   def show

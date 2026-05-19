@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_19_072300) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_19_075339) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -78,6 +78,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_19_072300) do
     t.index ["user_id"], name: "index_estimates_on_user_id"
   end
 
+  create_table "invoices", force: :cascade do |t|
+    t.integer "amount"
+    t.string "client_name"
+    t.datetime "created_at", null: false
+    t.date "due_date"
+    t.date "invoiced_on"
+    t.text "note"
+    t.bigint "project_id", null: false
+    t.string "subject"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["project_id"], name: "index_invoices_on_project_id"
+    t.index ["user_id"], name: "index_invoices_on_user_id"
+  end
+
   create_table "projects", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "name", null: false
@@ -138,6 +153,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_19_072300) do
   add_foreign_key "construction_records", "users"
   add_foreign_key "estimates", "projects"
   add_foreign_key "estimates", "users"
+  add_foreign_key "invoices", "projects"
+  add_foreign_key "invoices", "users"
   add_foreign_key "receipts", "projects"
   add_foreign_key "receipts", "users"
   add_foreign_key "ws_logs", "projects"
