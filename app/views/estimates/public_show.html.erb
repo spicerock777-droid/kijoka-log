@@ -83,7 +83,7 @@
 
               <% mats.each do |m| %>
                 <div class="flex justify-between text-xs text-gray-400 border-l border-stone-300 pl-2.5">
-                  <span>資材：<%= m["name"].presence || "—" %><%= m["qty"].present? ? "　#{m["qty"]}個" : "" %></span>
+                  <span>資材：<%= m["name"].presence || "—" %><%= m["qty"].present? ? "　#{m["qty"]}" : "" %></span>
                   <span><%= m["cost"].to_i > 0 ? "¥#{number_with_delimiter(m["cost"].to_i)}" : "" %></span>
                 </div>
               <% end %>
