@@ -21,44 +21,54 @@
   </div>
 
   <%# 見積書本体（印刷用） %>
-  <div class="bg-white border border-gray-200 rounded-lg p-8 shadow-sm" id="estimate-print">
+  <div class="bg-white border border-gray-100 rounded-xl p-10 shadow-sm" id="estimate-print">
 
-    <div class="text-center text-2xl font-bold text-green-900 border-b-2 border-green-900 pb-4 mb-6" style="font-family: 'Shippori Mincho', serif; letter-spacing: 0.3em;">
-      御　見　積　書
+    <%# タイトル %>
+    <div class="text-center mb-8">
+      <p class="text-xs tracking-widest text-gray-400 mb-2">ESTIMATE</p>
+      <h1 class="text-2xl font-medium text-gray-700" style="font-family: 'Shippori Mincho', serif; letter-spacing: 0.5em;">御　見　積　書</h1>
+      <div class="mt-3 flex items-center gap-3 justify-center">
+        <div class="h-px flex-1 bg-gray-200"></div>
+        <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+        <div class="h-px flex-1 bg-gray-200"></div>
+      </div>
     </div>
 
-    <div class="flex justify-between items-start mb-6">
+    <%# 宛先・発行情報 %>
+    <div class="flex justify-between items-end mb-8">
       <div>
-        <div class="text-xs text-green-700 mb-1">お客様名</div>
-        <div class="text-lg font-bold text-green-900 border-b border-green-900 pb-1 min-w-48">
+        <div class="text-xs text-gray-400 mb-1.5 tracking-wide">お客様名</div>
+        <div class="text-xl font-medium text-gray-800 border-b border-gray-400 pb-1.5 min-w-52">
           <%= @estimate.client_name.presence || "　" %>　様
         </div>
       </div>
-      <div class="text-sm space-y-1 text-right">
-        <div><span class="text-gray-500">見積日：</span><%= @estimate.doc_date.strftime("%Y年%-m月%-d日") %></div>
-        <div><span class="text-gray-500">有効期限：</span>発行日より30日間</div>
+      <div class="text-xs text-gray-400 space-y-1.5 text-right">
+        <div>見積日：<span class="text-gray-600"><%= @estimate.doc_date.strftime("%Y年%-m月%-d日") %></span></div>
+        <div>有効期限：<span class="text-gray-600">発行日より30日間</span></div>
         <% if @estimate.doc_number.present? %>
-          <div><span class="text-gray-500">見積番号：</span><%= @estimate.doc_number %></div>
+          <div>見積番号：<span class="text-gray-600"><%= @estimate.doc_number %></span></div>
         <% end %>
-        <div><span class="text-gray-500">現場：</span><span class="font-medium text-green-800"><%= @project.name %></span></div>
+        <div>現場：<span class="text-gray-700 font-medium"><%= @project.name %></span></div>
       </div>
     </div>
 
     <% if @estimate.subject.present? %>
-      <div class="bg-green-50 border border-green-200 rounded-md px-4 py-2 mb-6 text-sm font-bold text-green-900">
-        件名：<%= @estimate.subject %>
+      <div class="border-l-2 border-gray-300 pl-4 mb-8 py-0.5">
+        <span class="text-xs text-gray-400">件名</span>
+        <div class="text-sm font-medium text-gray-700 mt-0.5"><%= @estimate.subject %></div>
       </div>
     <% end %>
 
-    <table class="w-full text-sm mb-4">
+    <%# 明細テーブル %>
+    <table class="w-full text-sm mb-8">
       <thead>
-        <tr class="bg-green-900 text-white">
-          <th class="py-2 px-3 text-left w-2/5">施工内容 / 資材</th>
-          <th class="py-2 px-3 text-right w-14">数量</th>
-          <th class="py-2 px-3 text-left w-10">単位</th>
-          <th class="py-2 px-3 text-right w-24">単価</th>
-          <th class="py-2 px-3 text-right w-24">金額</th>
-          <th class="py-2 px-3 text-left">備考</th>
+        <tr class="border-b border-gray-300">
+          <th class="pb-2.5 px-2 text-left text-xs font-normal text-gray-400 tracking-wider w-5/12">施工内容</th>
+          <th class="pb-2.5 px-2 text-right text-xs font-normal text-gray-400 tracking-wider w-10">数量</th>
+          <th class="pb-2.5 px-2 text-left text-xs font-normal text-gray-400 tracking-wider w-8">単位</th>
+          <th class="pb-2.5 px-2 text-right text-xs font-normal text-gray-400 tracking-wider w-24">単価</th>
+          <th class="pb-2.5 px-2 text-right text-xs font-normal text-gray-400 tracking-wider w-24">金額</th>
+          <th class="pb-2.5 px-2 text-left text-xs font-normal text-gray-400 tracking-wider">備考</th>
         </tr>
       </thead>
       <tbody>
@@ -67,63 +77,70 @@
           <% unit_prices = item["unit_prices"] %>
           <% multi = unit_prices.present? && unit_prices.length > 1 %>
           <% amt = multi ? unit_prices.sum { |p| p.to_f.round } : (qty * price).round %>
-          <tr class="border-b border-gray-100">
-            <td class="py-2 px-3"><%= item["description"] %></td>
-            <td class="py-2 px-3 text-right"><%= qty > 0 ? qty.to_i : "" %></td>
-            <td class="py-2 px-3"><%= item["unit"] %></td>
-            <td class="py-2 px-3 text-right text-gray-400"><%= multi ? "（個別）" : (price > 0 ? number_with_delimiter(price.to_i) : "") %></td>
-            <td class="py-2 px-3 text-right font-medium text-green-800"><%= amt > 0 ? "¥#{number_with_delimiter(amt)}" : "" %></td>
-            <td class="py-2 px-3 text-gray-500 text-xs"><%= item["note"] %></td>
+          <% mats = item["materials"].presence || (item["material_name"].present? ? [{"name"=>item["material_name"],"cost"=>item["material_cost"]}] : []) %>
+          <% mats = mats.select { |m| m["name"].present? || m["cost"].to_i > 0 } %>
+          <% has_sub = multi || mats.any? %>
+          <tr class="<%= has_sub ? "" : "border-b border-gray-100" %>">
+            <td class="py-3.5 px-2 text-gray-700"><%= item["description"] %></td>
+            <td class="py-3.5 px-2 text-right text-gray-500"><%= qty > 0 ? qty.to_i : "" %></td>
+            <td class="py-3.5 px-2 text-gray-400"><%= item["unit"] %></td>
+            <td class="py-3.5 px-2 text-right text-gray-400"><%= multi ? "個別" : (price > 0 ? number_with_delimiter(price.to_i) : "") %></td>
+            <td class="py-3.5 px-2 text-right text-gray-700 font-medium"><%= amt > 0 ? "¥#{number_with_delimiter(amt)}" : "" %></td>
+            <td class="py-3.5 px-2 text-gray-400 text-xs"><%= item["note"] %></td>
           </tr>
           <% if multi %>
             <% unit_prices.each_with_index do |p, i| %>
-              <tr class="border-b border-gray-100 bg-blue-50">
-                <td class="py-1.5 px-3 text-xs text-blue-700 pl-6" colspan="3">└ <%= i + 1 %>人目</td>
-                <td class="py-1.5 px-3 text-right text-xs font-medium text-blue-700">¥<%= number_with_delimiter(p.to_f.round) %></td>
+              <% last_sub = !mats.any? && i == unit_prices.length - 1 %>
+              <tr class="<%= last_sub ? "border-b border-gray-100" : "" %>">
+                <td class="pb-2 pl-6 pr-2 text-xs text-gray-400" colspan="3">
+                  <span class="border-l border-gray-300 pl-2.5"><%= i + 1 %>人目</span>
+                </td>
+                <td class="pb-2 px-2 text-right text-xs text-gray-400">¥<%= number_with_delimiter(p.to_f.round) %></td>
                 <td colspan="2"></td>
               </tr>
             <% end %>
           <% end %>
-          <% mats = item["materials"].presence || (item["material_name"].present? ? [{"name"=>item["material_name"],"cost"=>item["material_cost"]}] : []) %>
-          <% mats.select { |m| m["name"].present? || m["cost"].to_i > 0 }.each do |m| %>
-            <tr class="border-b border-gray-100 bg-amber-50">
-              <td class="py-1.5 px-3 text-xs text-amber-700">└ 資材：<%= m["name"].presence || "—" %><%= m["qty"].present? ? "　#{m["qty"]}個" : "" %></td>
-              <td colspan="3"></td>
-              <td class="py-1.5 px-3 text-right text-xs font-medium text-amber-700"><%= m["cost"].to_i > 0 ? "¥#{number_with_delimiter(m["cost"].to_i)}" : "" %></td>
-              <td></td>
+          <% mats.each_with_index do |m, j| %>
+            <tr class="<%= j == mats.length - 1 ? "border-b border-gray-100" : "" %>">
+              <td class="pb-2 pl-6 pr-2 text-xs text-gray-400" colspan="3">
+                <span class="border-l border-stone-300 pl-2.5">資材：<%= m["name"].presence || "—" %><%= m["qty"].present? ? "　#{m["qty"]}個" : "" %></span>
+              </td>
+              <td class="pb-2 px-2 text-right text-xs text-gray-400"><%= m["cost"].to_i > 0 ? "¥#{number_with_delimiter(m["cost"].to_i)}" : "" %></td>
+              <td colspan="2"></td>
             </tr>
           <% end %>
         <% end %>
       </tbody>
     </table>
 
-    <div class="flex justify-end mb-6">
-      <table class="text-sm w-52">
-        <tr class="border-b border-gray-200">
-          <td class="py-1.5 pr-4 text-gray-500">施工費小計</td>
-          <td class="py-1.5 text-right font-medium">¥<%= number_with_delimiter(@estimate.work_subtotal) %></td>
+    <%# 合計 %>
+    <div class="flex justify-end mb-8">
+      <table class="text-sm w-60">
+        <tr class="border-b border-gray-100">
+          <td class="py-2 pr-6 text-gray-400">施工費小計</td>
+          <td class="py-2 text-right text-gray-600">¥<%= number_with_delimiter(@estimate.work_subtotal) %></td>
         </tr>
         <% if @estimate.material_subtotal > 0 %>
-          <tr class="border-b border-gray-200">
-            <td class="py-1.5 pr-4 text-amber-600">資材費小計</td>
-            <td class="py-1.5 text-right font-medium text-amber-600">¥<%= number_with_delimiter(@estimate.material_subtotal) %></td>
+          <tr class="border-b border-gray-100">
+            <td class="py-2 pr-6 text-gray-400">資材費小計</td>
+            <td class="py-2 text-right text-gray-600">¥<%= number_with_delimiter(@estimate.material_subtotal) %></td>
           </tr>
         <% end %>
         <tr class="border-b border-gray-200">
-          <td class="py-1.5 pr-4 text-gray-500">消費税（10%）</td>
-          <td class="py-1.5 text-right font-medium">¥<%= number_with_delimiter(@estimate.tax) %></td>
+          <td class="py-2 pr-6 text-gray-400">消費税（10%）</td>
+          <td class="py-2 text-right text-gray-600">¥<%= number_with_delimiter(@estimate.tax) %></td>
         </tr>
-        <tr class="bg-green-900 text-white">
-          <td class="py-2.5 px-3 font-bold">合計金額</td>
-          <td class="py-2.5 px-3 text-right font-bold text-lg">¥<%= number_with_delimiter(@estimate.grand_total) %></td>
+        <tr>
+          <td class="pt-4 pr-6 text-gray-700 font-medium tracking-wide" style="letter-spacing: 0.1em;">合　計　金　額</td>
+          <td class="pt-4 text-right text-2xl font-bold text-gray-800">¥<%= number_with_delimiter(@estimate.grand_total) %></td>
         </tr>
       </table>
     </div>
 
     <% if @estimate.note.present? %>
-      <div class="border border-gray-200 rounded-md p-4 text-sm text-gray-600">
-        <div class="font-bold text-gray-700 mb-1 text-xs">備考・条件</div>
-        <p class="whitespace-pre-wrap"><%= @estimate.note %></p>
+      <div class="border-t border-gray-100 pt-6 text-sm text-gray-500">
+        <div class="text-xs text-gray-400 mb-2 tracking-wide">備考・条件</div>
+        <p class="whitespace-pre-wrap leading-relaxed"><%= @estimate.note %></p>
       </div>
     <% end %>
 
