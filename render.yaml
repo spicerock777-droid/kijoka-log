@@ -1,8 +1,9 @@
 services:
   - type: web
     name: kijoka-log
-    env: docker
+    env: ruby
     plan: free
+    buildCommand: "./bin/render-build.sh"
     startCommand: "bundle exec rails server -b 0.0.0.0"
     envVars:
       - key: DATABASE_URL
