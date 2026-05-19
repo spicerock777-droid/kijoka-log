@@ -40,6 +40,12 @@ export default class extends Controller {
     this.recalc()
   }
 
+  selectUnit(e) {
+    const card = e.target.closest(".item-card")
+    card.querySelector(".inp-unit").value = e.target.dataset.unit
+    this.syncJson()
+  }
+
   syncJson() {
     const cards = this.listTarget.querySelectorAll(".item-card")
     const items = Array.from(cards).map(card => ({
@@ -92,6 +98,9 @@ export default class extends Controller {
           <label class="text-xs text-gray-500">単位</label>
           <input type="text" class="inp-unit mt-0.5 block w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-green-600 bg-white"
             value="${item.unit || "式"}">
+          <div class="flex gap-1 mt-1 flex-wrap">
+            ${["式","人","日","回","m²","m"].map(u => `<button type="button" class="unit-chip text-xs px-2 py-0.5 border border-gray-300 rounded bg-white hover:bg-green-50 active:bg-green-100" data-action="click->estimate-items#selectUnit" data-unit="${u}">${u}</button>`).join("")}
+          </div>
         </div>
       </div>
       <div class="grid grid-cols-2 gap-2">
