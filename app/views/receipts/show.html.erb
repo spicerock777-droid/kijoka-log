@@ -1,0 +1,106 @@
+<% content_for :title, "領収書" %>
+
+<div class="w-full max-w-lg">
+  <% if notice.present? %>
+    <p class="py-2 px-3 bg-green-50 mb-4 text-green-500 font-medium rounded-md text-sm"><%= notice %></p>
+  <% end %>
+
+  <div class="mb-4 flex items-center justify-between no-print">
+    <%= link_to "← #{@project.name}", project_path(@project), class: "text-sm text-gray-500 hover:text-gray-700" %>
+    <div class="flex gap-2">
+      <%= link_to "編集", edit_project_receipt_path(@project, @receipt), class: "text-sm px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-md" %>
+      <%= button_to "削除", project_receipt_path(@project, @receipt), method: :delete,
+          class: "text-sm px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-md cursor-pointer",
+          data: { turbo_confirm: "削除しますか？" } %>
+      <button onclick="window.print()" class="text-sm px-3 py-1.5 bg-green-700 text-white hover:bg-green-600 rounded-md">印刷 / PDF</button>
+    </div>
+  </div>
+
+  <%# 領収書本体 %>
+  <div class="bg-white border border-gray-100 rounded-xl p-10 shadow-sm" id="receipt-print">
+
+    <%# 収入印紙欄（5万円以上） %>
+    <% if @receipt.amount.to_i >= 50000 %>
+      <div class="flex justify-end mb-6">
+        <div class="border border-gray-300 rounded w-24 h-16 flex items-center justify-center">
+          <span class="text-xs text-gray-300 text-center leading-tight">収入<br>印紙</span>
+        </div>
+      </div>
+    <% end %>
+
+    <%# タイトル %>
+    <div class="text-center mb-10">
+      <p class="text-xs tracking-widest text-gray-400 mb-2">RECEIPT</p>
+      <h1 class="text-3xl font-medium text-gray-700" style="font-family: 'Shippori Mincho', serif; letter-spacing: 0.6em;">領　収　書</h1>
+      <div class="mt-3 flex items-center gap-3 justify-center">
+        <div class="h-px flex-1 bg-gray-200"></div>
+        <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+        <div class="h-px flex-1 bg-gray-200"></div>
+      </div>
+    </div>
+
+    <%# お客様名 %>
+    <div class="mb-8">
+      <div class="text-xs text-gray-400 mb-1.5 tracking-wide">お客様名</div>
+      <div class="text-xl font-medium text-gray-800 border-b border-gray-400 pb-2">
+        <%= @receipt.client_name.presence || "　" %>　様
+      </div>
+    </div>
+
+    <%# 金額 %>
+    <div class="mb-8 text-center py-6 border-y border-gray-200">
+      <div class="text-xs text-gray-400 mb-2 tracking-wide">受領金額</div>
+      <div class="text-4xl font-bold text-gray-800" style="font-family: 'Shippori Mincho', serif;">
+        ¥<%= number_with_delimiter(@receipt.amount) %>－
+      </div>
+      <div class="text-xs text-gray-400 mt-1">（税込）</div>
+    </div>
+
+    <%# 受領日・但し書き %>
+    <div class="space-y-4 mb-8">
+      <div class="flex gap-6 text-sm">
+        <span class="text-gray-400 w-16 flex-shrink-0">受領日</span>
+        <span class="text-gray-700"><%= @receipt.received_on.strftime("%Y年%-m月%-d日") %></span>
+      </div>
+      <% if @receipt.tadashi.present? %>
+        <div class="flex gap-6 text-sm">
+          <span class="text-gray-400 w-16 flex-shrink-0">但し</span>
+          <span class="text-gray-700"><%= @receipt.tadashi %></span>
+        </div>
+      <% end %>
+      <% if @receipt.payment_method.present? %>
+        <div class="flex gap-6 text-sm">
+          <span class="text-gray-400 w-16 flex-shrink-0">支払方法</span>
+          <span class="text-gray-700"><%= @receipt.payment_method %></span>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="text-center text-sm text-gray-500 border-t border-gray-100 pt-6">
+      上記の金額、正に領収いたしました。
+    </div>
+
+    <%# 備考 %>
+    <% if @receipt.note.present? %>
+      <div class="mt-6 text-xs text-gray-400">
+        <span class="mr-2">備考：</span><%= @receipt.note %>
+      </div>
+    <% end %>
+
+    <%# 発行者 %>
+    <div class="mt-8 text-right text-sm text-gray-500">
+      <div class="font-medium text-gray-700"><%= @project.name %></div>
+      <div class="text-xs text-gray-400 mt-1">環境整備事業</div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+@media print {
+  .no-print { display: none !important; }
+  nav { display: none !important; }
+  body { background: white; }
+  #receipt-print { border: none; box-shadow: none; padding: 1cm; }
+}
+</style>

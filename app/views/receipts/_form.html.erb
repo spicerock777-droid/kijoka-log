@@ -1,0 +1,45 @@
+<%= form_with(model: [@project, receipt]) do |f| %>
+  <% if receipt.errors.any? %>
+    <div class="bg-red-50 text-red-500 px-3 py-2 rounded-md mb-4 text-sm">
+      <% receipt.errors.each do |e| %><div><%= e.full_message %></div><% end %>
+    </div>
+  <% end %>
+
+  <div class="space-y-4">
+    <div class="grid grid-cols-2 gap-3">
+      <div>
+        <%= f.label :received_on, "受領日", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= f.date_field :received_on, class: "block w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm focus:outline-green-600" %>
+      </div>
+      <div>
+        <%= f.label :amount, "金額（税込）", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= f.number_field :amount, min: 0, class: "block w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm focus:outline-green-600", placeholder: "123456" %>
+      </div>
+    </div>
+
+    <div>
+      <%= f.label :client_name, "お客様名", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.text_field :client_name, class: "block w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm focus:outline-green-600", placeholder: "山田太郎" %>
+    </div>
+
+    <div>
+      <%= f.label :tadashi, "但し書き", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.text_field :tadashi, class: "block w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm focus:outline-green-600", placeholder: "水脈整備施工代として" %>
+    </div>
+
+    <div>
+      <%= f.label :payment_method, "支払方法", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.text_field :payment_method, class: "block w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm focus:outline-green-600", placeholder: "現金 / 銀行振込（任意）" %>
+    </div>
+
+    <div>
+      <%= f.label :note, "備考", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.text_area :note, rows: 2, class: "block w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm focus:outline-green-600" %>
+    </div>
+  </div>
+
+  <div class="mt-6">
+    <%= f.submit receipt.new_record? ? "保存する" : "更新する",
+        class: "w-full rounded-md px-5 py-3 bg-green-700 hover:bg-green-600 text-white font-medium cursor-pointer text-base" %>
+  </div>
+<% end %>

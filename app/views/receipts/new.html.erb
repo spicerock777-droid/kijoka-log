@@ -1,0 +1,5 @@
+<% content_for :title, "領収書新規作成" %>
+<div class="w-full max-w-lg">
+  <h1 class="font-bold text-xl text-green-900 mb-5"><%= @project.name %> - 領収書作成</h1>
+  <%= render "form", receipt: @receipt %>
+</div>
