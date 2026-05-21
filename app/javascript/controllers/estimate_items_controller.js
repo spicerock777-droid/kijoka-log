@@ -37,6 +37,28 @@ export default class extends Controller {
     this.recalc()
   }
 
+  dragStart(e) {
+    this._dragging = e.target.closest(".item-card")
+    this._dragging.classList.add("opacity-50")
+    e.dataTransfer.effectAllowed = "move"
+  }
+
+  dragOver(e) {
+    e.preventDefault()
+    const target = e.target.closest(".item-card")
+    if (!target || target === this._dragging) return
+    const rect = target.getBoundingClientRect()
+    const after = e.clientY > rect.top + rect.height / 2
+    target.parentNode.insertBefore(this._dragging, after ? target.nextSibling : target)
+  }
+
+  dragEnd() {
+    this._dragging?.classList.remove("opacity-50")
+    this._dragging = null
+    this.syncJson()
+    this.recalc()
+  }
+
   update(e) {
     if (e?.target?.classList.contains("inp-qty")) {
       const card = e.target.closest(".item-card")
@@ -49,6 +71,7 @@ export default class extends Controller {
   selectUnit(e) {
     const card = e.target.closest(".item-card")
     card.querySelector(".inp-unit").value = e.target.dataset.unit
+    this.updatePriceFields(card)
     this.syncJson()
   }
 
@@ -64,12 +87,14 @@ export default class extends Controller {
     this.recalc()
   }
 
-  // 数量に合わせて単価欄の数を調整する
+  // 数量に合わせて単価欄の数を調整する（人工・人のときのみ分割）
   updatePriceFields(card) {
-    const qty = parseInt(card.querySelector(".inp-qty").value, 10)
+    const qty  = parseInt(card.querySelector(".inp-qty").value, 10)
+    const unit = card.querySelector(".inp-unit").value
     const list = card.querySelector(".price-list")
     const inputs = list.querySelectorAll(".price-row-input")
-    const target = (!isNaN(qty) && qty >= 2) ? qty : 1
+    const isPersonal = ["人工", "人"].includes(unit)
+    const target = (isPersonal && !isNaN(qty) && qty >= 2) ? qty : 1
 
     if (target > inputs.length) {
       for (let i = inputs.length; i < target; i++) {
@@ -138,9 +163,10 @@ export default class extends Controller {
         materialSubtotal += parseFloat(row.querySelector(".inp-material-cost").value.replace(/,/g, "")) || 0
       })
     })
-    const subtotal = workSubtotal + materialSubtotal
-    const tax   = Math.floor(subtotal * 0.1)
-    const total = subtotal + tax
+    const subtotal  = workSubtotal + materialSubtotal
+    const applyTax  = this.element.querySelector("#apply_tax")?.checked ?? false
+    const tax       = applyTax ? Math.floor(subtotal * 0.1) : 0
+    const total     = subtotal + tax
     const fmt   = n => "¥" + n.toLocaleString("ja-JP")
     this.workSubtotalTarget.textContent     = fmt(workSubtotal)
     this.materialSubtotalTarget.textContent = fmt(materialSubtotal)
@@ -178,7 +204,12 @@ export default class extends Controller {
   buildCard(item = {}) {
     const div = document.createElement("div")
     div.className = "item-card bg-gray-50 border border-gray-200 rounded-lg p-3 space-y-2"
+    div.draggable = true
+    div.setAttribute("data-action", "dragstart->estimate-items#dragStart dragover->estimate-items#dragOver dragend->estimate-items#dragEnd")
     div.innerHTML = `
+      <div class="flex items-center gap-1 cursor-grab text-gray-300 select-none mb-1" title="ドラッグして並び替え">
+        <span>⠿</span><span class="text-xs">並び替え</span>
+      </div>
       <div>
         <label class="text-xs text-gray-500">施工内容</label>
         <input type="text" class="inp-desc mt-0.5 block w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-green-600 bg-white"
@@ -213,9 +244,9 @@ export default class extends Controller {
       </div>
       <div class="space-y-1.5">
         <div class="flex items-center justify-between">
-          <label class="text-xs text-amber-600">資材</label>
+          <label class="text-xs text-amber-600">内訳（資材・諸費用など）</label>
           <button type="button" class="text-xs text-amber-600 hover:text-amber-800"
-            data-action="click->estimate-items#addMaterial">＋ 資材を追加</button>
+            data-action="click->estimate-items#addMaterial">＋ 内訳を追加</button>
         </div>
         <div class="material-list space-y-1.5"></div>
       </div>
