@@ -66,7 +66,7 @@
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
           <% photos.each do |photo| %>
             <div>
-              <%= image_tag photo.variant(resize_to_fill: [400, 300]), class: "w-full h-40 object-cover rounded-md", loading: "lazy" %>
+              <%= image_tag photo, class: "w-full h-40 object-cover rounded-md", loading: "lazy" %>
               <% caption = captions_map.fetch(photo.blob.id.to_s, "") %>
               <% if caption.present? %>
                 <p class="text-xs text-gray-500 mt-1 px-1"><%= caption %></p>
