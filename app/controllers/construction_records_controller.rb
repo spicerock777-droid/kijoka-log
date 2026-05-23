@@ -25,7 +25,10 @@ class ConstructionRecordsController < ApplicationController
   end
 
   def update
-    if @construction_record.update(construction_record_params)
+    p = construction_record_params
+    p = p.except(:photos) if params.dig(:construction_record, :photos).blank? ||
+                              params.dig(:construction_record, :photos).all?(&:blank?)
+    if @construction_record.update(p)
       redirect_to project_construction_record_path(@project, @construction_record), notice: "施工記録を更新しました"
     else
       render :edit, status: :unprocessable_content
