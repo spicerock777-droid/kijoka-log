@@ -9,7 +9,7 @@ class EstimatesController < ApplicationController
       render :expired, layout: "application", status: :gone and return
     end
     @project = @estimate.project
-    render :public_show, layout: "application"
+    render :public_show, layout: "public"
   end
 
   def index
