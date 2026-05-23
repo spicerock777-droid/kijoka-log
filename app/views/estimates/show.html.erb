@@ -248,7 +248,15 @@
       margin: 8,
       filename: filename + '.pdf',
       image: { type: 'jpeg', quality: 0.95 },
-      html2canvas: { scale: 2, useCORS: false, allowTaint: true, logging: false },
+      html2canvas: {
+        scale: 2,
+        useCORS: false,
+        allowTaint: true,
+        logging: false,
+        onclone: function(doc) {
+          doc.querySelectorAll('link[href*="fonts.googleapis"], link[href*="fonts.gstatic"]').forEach(el => el.remove())
+        }
+      },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     }).from(el).save().then(() => {
       btn.textContent = 'PDFダウンロード'
@@ -256,7 +264,7 @@
     }).catch(() => {
       btn.textContent = 'PDFダウンロード'
       btn.disabled = false
-      alert('PDF生成に失敗しました。印刷からPDF保存をお試しください。')
+      alert('PDF生成に失敗しました。印刷ボタンからPDF保存をお試しください。')
     })
   }
 </script>
