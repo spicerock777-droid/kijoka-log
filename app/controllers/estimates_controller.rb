@@ -1,6 +1,6 @@
 class EstimatesController < ApplicationController
-  before_action :authenticate_user!, except: [:public_show]
-  before_action :set_project, except: [:index, :public_show]
+  before_action :authenticate_user!, except: [:public_show, :public_print]
+  before_action :set_project, except: [:index, :public_show, :public_print]
   before_action :set_estimate, only: [:show, :edit, :update, :destroy, :extend_share, :print]
 
   def public_show
@@ -10,6 +10,15 @@ class EstimatesController < ApplicationController
     end
     @project = @estimate.project
     render :public_show, layout: "public"
+  end
+
+  def public_print
+    @estimate = Estimate.find_by!(share_token: params[:token])
+    if @estimate.share_token_expired?
+      render :expired, layout: "application", status: :gone and return
+    end
+    @project = @estimate.project
+    render :print, layout: false
   end
 
   def index

@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   get "documents", to: "estimates#index", as: :documents
   get "estimates", to: redirect("/documents")
   get "e/:token", to: "estimates#public_show", as: :public_estimate
+  get "e/:token/print", to: "estimates#public_print", as: :public_estimate_print
   get "i/:token", to: "invoices#public_show", as: :public_invoice
   get "r/:token", to: "receipts#public_show", as: :public_receipt
 
