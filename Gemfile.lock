@@ -80,7 +80,6 @@ GEM
     bcrypt (3.1.22)
     bcrypt_pbkdf (1.1.2)
     bigdecimal (4.1.2)
-    bindex (0.8.1)
     bootsnap (1.24.4)
       msgpack (~> 1.2)
     brakeman (8.0.4)
@@ -358,10 +357,6 @@ GEM
     useragent (0.16.11)
     warden (1.2.9)
       rack (>= 2.0.9)
-    web-console (4.3.0)
-      actionview (>= 8.0.0)
-      bindex (>= 0.4.0)
-      railties (>= 8.0.0)
     websocket-driver (0.8.0)
       base64
       websocket-extensions (>= 0.1.0)
@@ -401,7 +396,6 @@ DEPENDENCIES
   thruster
   turbo-rails
   tzinfo-data
-  web-console
 
 BUNDLED WITH
    2.6.9

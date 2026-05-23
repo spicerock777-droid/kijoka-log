@@ -25,14 +25,16 @@
             <%= @estimate.client_name.presence || "　" %>　様
           </div>
         </div>
-        <div class="text-xs text-gray-400 space-y-1.5 text-right flex-shrink-0">
-          <div class="text-sm font-bold text-gray-800 mb-1">長島開発</div>
-          <div><%= @estimate.doc_date.strftime("%Y年%-m月%-d日") %></div>
-          <div>有効期限：30日間</div>
-          <% if @estimate.doc_number.present? %>
-            <div>No. <%= @estimate.doc_number %></div>
-          <% end %>
-          <div class="text-gray-600 font-medium"><%= @project.name %></div>
+        <div class="text-xs text-gray-400 flex-shrink-0">
+          <div class="text-sm font-bold text-gray-800 mb-2 text-right">長島開発</div>
+          <div class="flex flex-wrap gap-x-4 gap-y-1 justify-end">
+            <div><%= @estimate.doc_date.strftime("%Y年%-m月%-d日") %></div>
+            <div>有効期限：30日間</div>
+            <% if @estimate.doc_number.present? %>
+              <div>No. <%= @estimate.doc_number %></div>
+            <% end %>
+            <div class="text-gray-600 font-medium"><%= @project.name %></div>
+          </div>
         </div>
       </div>
 
@@ -135,4 +137,19 @@
 
     </div>
   </div>
+
+  <%# PDFボタン（印刷） %>
+  <div class="no-print mt-4 flex gap-3 justify-center">
+    <button onclick="window.print()" class="px-5 py-3 bg-green-700 text-white rounded-lg text-sm font-medium hover:bg-green-600 active:bg-green-800">
+      📄 PDFとして保存
+    </button>
+  </div>
+
 </div>
+
+<style>
+  @media print {
+    .no-print { display: none !important; }
+    body { background: white; }
+  }
+</style>

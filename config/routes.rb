@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  devise_for :users
+  devise_for :users, controllers: { sessions: "users/sessions" }
   resources :projects, only: [:index, :show] do
     member { get :gallery }
     resources :construction_records, except: [:index]
