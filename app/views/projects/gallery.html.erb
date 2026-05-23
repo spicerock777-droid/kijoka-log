@@ -27,7 +27,7 @@
                 <% end %>
                 <% record.photos.each do |photo| %>
                   <%= link_to project_construction_record_path(@project, record) do %>
-                    <%= image_tag photo.variant(resize_to_fill: [200, 150], format: :webp, saver: { quality: 70 }), class: "w-48 h-36 object-cover rounded-lg border border-gray-200 mb-1 block", loading: "lazy" %>
+                    <%= image_tag photo.variant(resize_to_fill: [200, 150]), class: "w-48 h-36 object-cover rounded-lg border border-gray-200 mb-1 block", loading: "lazy" %>
                   <% end %>
                 <% end %>
               </div>
