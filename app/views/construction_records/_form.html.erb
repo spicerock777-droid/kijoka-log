@@ -16,7 +16,7 @@
 
   <div class="my-5">
     <%= form.label :site, "場所", class: "block font-medium text-gray-700" %>
-    <%= form.select :site, @project.sites, { include_blank: "選択してください" }, class: "block shadow-sm rounded-md border border-gray-400 px-3 py-2 mt-2 w-full focus:outline-blue-600" %>
+    <%= form.text_field :site, placeholder: "例：南側斜面、池周辺", class: "block shadow-sm rounded-md border border-gray-400 px-3 py-2 mt-2 w-full focus:outline-blue-600" %>
   </div>
 
   <div class="my-5">
