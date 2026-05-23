@@ -180,7 +180,7 @@
             tadashi:     "#{@estimate.subject}施工代として"),
           style: "font-size:14px;padding:8px 12px;background:#e7e5e4;color:#44403c;border-radius:6px;text-decoration:none" %>
     <button onclick="window.print()" style="font-size:14px;padding:8px 12px;background:#15803d;color:white;border-radius:6px;cursor:pointer;border:none">印刷</button>
-    <button onclick="downloadPdf(this,'estimate-print','御見積書_<%= j @estimate.subject %>_<%= @estimate.doc_date.strftime("%Y%m%d") %>')" style="font-size:14px;padding:8px 12px;background:#4f46e5;color:white;border-radius:6px;cursor:pointer;border:none">PDFダウンロード</button>
+    <%= link_to "PDFダウンロード", print_project_estimate_path(@project, @estimate), target: "_blank", style: "font-size:14px;padding:8px 12px;background:#4f46e5;color:white;border-radius:6px;text-decoration:none" %>
     <%= link_to "LINEで送る",
           "https://line.me/R/msg/text/?text=#{CGI.escape("【御見積書】\n現場：#{@project.name}\n#{@estimate.subject}\n合計：¥#{number_with_delimiter(@estimate.grand_total)}\n\n詳細はこちら：#{request.base_url}/e/#{@estimate.share_token}")}",
           target: "_blank",

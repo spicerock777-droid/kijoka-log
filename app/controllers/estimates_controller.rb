@@ -1,7 +1,7 @@
 class EstimatesController < ApplicationController
   before_action :authenticate_user!, except: [:public_show]
   before_action :set_project, except: [:index, :public_show]
-  before_action :set_estimate, only: [:show, :edit, :update, :destroy, :extend_share]
+  before_action :set_estimate, only: [:show, :edit, :update, :destroy, :extend_share, :print]
 
   def public_show
     @estimate = Estimate.find_by!(share_token: params[:token])
@@ -50,6 +50,10 @@ class EstimatesController < ApplicationController
     else
       render :edit, status: :unprocessable_content
     end
+  end
+
+  def print
+    render layout: false
   end
 
   def extend_share

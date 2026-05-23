@@ -4,7 +4,10 @@ Rails.application.routes.draw do
     member { get :gallery }
     resources :construction_records, except: [:index]
     resources :estimates, except: [:index] do
-      member { patch :extend_share }
+      member do
+        patch :extend_share
+        get :print
+      end
     end
     resources :ws_logs, except: [:index]
     resources :receipts, except: [:index] do
