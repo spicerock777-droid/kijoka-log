@@ -65,7 +65,7 @@
       <div class="text-sm text-gray-600 font-medium space-y-1.5 text-right">
         <div class="text-base font-bold text-gray-900 mb-1">長島開発</div>
         <div>見積日：<span class="text-gray-800 font-semibold"><%= @estimate.doc_date.strftime("%Y年%-m月%-d日") %></span></div>
-        <div>有効期限：<span class="text-gray-700">発行日より30日間</span></div>
+
         <% if @estimate.doc_number.present? %>
           <div>見積番号：<span class="text-gray-800"><%= @estimate.doc_number %></span></div>
         <% end %>

@@ -64,7 +64,7 @@
     <div class="issuer">
       <div class="co">長島開発</div>
       <div>見積日：<strong><%= @estimate.doc_date.strftime("%Y年%-m月%-d日") %></strong></div>
-      <div>有効期限：発行日より30日間</div>
+
       <% if @estimate.doc_number.present? %>
         <div>見積番号：<%= @estimate.doc_number %></div>
       <% end %>

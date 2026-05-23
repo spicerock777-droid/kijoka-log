@@ -3,7 +3,6 @@ class Estimate < ApplicationRecord
   belongs_to :user
 
   before_create :generate_share_token
-  before_create :set_share_token_expiry
 
   validates :doc_date, presence: true
 
@@ -53,7 +52,4 @@ class Estimate < ApplicationRecord
     self.share_token = SecureRandom.urlsafe_base64(12)
   end
 
-  def set_share_token_expiry
-    self.share_token_expires_at = 30.days.from_now
-  end
 end
