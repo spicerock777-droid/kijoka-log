@@ -67,9 +67,12 @@
             <div class="mt-1.5 space-y-0.5">
               <% unless multi %>
                 <% if qty > 0 || price > 0 %>
-                  <div class="flex justify-between text-xs text-gray-400 border-l border-gray-200 pl-2.5">
-                    <span><%= qty > 0 ? "#{qty % 1 == 0 ? qty.to_i : qty} #{item["unit"]}" : "" %></span>
-                    <span><%= price > 0 ? "¥#{number_with_delimiter(price.to_i)}" : "" %></span>
+                  <% qty_s = qty > 0 ? "#{qty % 1 == 0 ? qty.to_i : qty}#{item["unit"]}" : "" %>
+                  <% price_s = price > 0 ? "¥#{number_with_delimiter(price.to_i)}" : "" %>
+                  <% unit_sfx = item["unit"].present? && price > 0 ? "/#{item["unit"]}" : "" %>
+                  <% detail = qty > 0 && price > 0 ? "#{qty_s} × #{price_s}#{unit_sfx}" : (qty > 0 ? qty_s : price_s) %>
+                  <div class="text-xs text-gray-400 border-l border-gray-200 pl-2.5">
+                    <%= detail %>
                   </div>
                 <% end %>
               <% end %>
