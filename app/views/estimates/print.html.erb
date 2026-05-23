@@ -160,7 +160,7 @@
     <div style="font-size:28px; margin-bottom:12px;">✅</div>
     <div style="font-size:15px; font-weight:700; margin-bottom:6px;">PDF保存完了</div>
     <div style="font-size:12px; color:#666; margin-bottom:24px;">LINEで見積リンクを送りますか？</div>
-    <a href="https://line.me/R/msg/text/?<%= CGI.escape("【御見積書】\n現場：#{@project.name}\n#{@estimate.subject}\n合計：¥#{number_with_delimiter(@estimate.grand_total)}\n\n詳細はこちら：#{request.base_url}/e/#{@estimate.share_token}") %>"
+    <a href="https://line.me/R/msg/text/?<%= CGI.escape("【御見積書】\n現場：#{@project.name}\n#{@estimate.subject}\n合計：¥#{number_with_delimiter(@estimate.grand_total)}\n\n詳細はこちら：#{public_base_url}/e/#{@estimate.share_token}") %>"
        target="_blank"
        style="display:block; background:#06C755; color:white; text-decoration:none; padding:12px 0; border-radius:8px; font-size:15px; font-weight:700; margin-bottom:10px;">
       LINEで送る

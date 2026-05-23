@@ -182,11 +182,11 @@
     <button onclick="window.print()" style="font-size:14px;padding:8px 12px;background:#15803d;color:white;border-radius:6px;cursor:pointer;border:none">印刷</button>
     <%= link_to "PDFダウンロード", print_project_estimate_path(@project, @estimate), target: "_blank", style: "font-size:14px;padding:8px 12px;background:#4f46e5;color:white;border-radius:6px;text-decoration:none" %>
     <%= link_to "LINEで送る",
-          "https://line.me/R/msg/text/?text=#{CGI.escape("【御見積書】\n現場：#{@project.name}\n#{@estimate.subject}\n合計：¥#{number_with_delimiter(@estimate.grand_total)}\n\n詳細はこちら：#{request.base_url}/e/#{@estimate.share_token}")}",
+          "https://line.me/R/msg/text/?text=#{CGI.escape("【御見積書】\n現場：#{@project.name}\n#{@estimate.subject}\n合計：¥#{number_with_delimiter(@estimate.grand_total)}\n\n詳細はこちら：#{public_base_url}/e/#{@estimate.share_token}")}",
           target: "_blank",
           style: "font-size:14px;padding:8px 12px;background:#22c55e;color:white;border-radius:6px;text-decoration:none" %>
     <%= link_to "Gmailで送る",
-          "https://mail.google.com/mail/?view=cm&fs=1&su=#{CGI.escape("【御見積書】#{@estimate.subject}")}&body=#{CGI.escape("#{@estimate.client_name.presence || ""}様\n\n御見積書をお送りします。\n\n現場：#{@project.name}\n件名：#{@estimate.subject}\n合計金額：¥#{number_with_delimiter(@estimate.grand_total)}\n\n詳細はこちらからご確認ください：\n#{request.base_url}/e/#{@estimate.share_token}\n\nよろしくお願いいたします。")}",
+          "https://mail.google.com/mail/?view=cm&fs=1&su=#{CGI.escape("【御見積書】#{@estimate.subject}")}&body=#{CGI.escape("#{@estimate.client_name.presence || ""}様\n\n御見積書をお送りします。\n\n現場：#{@project.name}\n件名：#{@estimate.subject}\n合計金額：¥#{number_with_delimiter(@estimate.grand_total)}\n\n詳細はこちらからご確認ください：\n#{public_base_url}/e/#{@estimate.share_token}\n\nよろしくお願いいたします。")}",
           target: "_blank",
           style: "font-size:14px;padding:8px 12px;background:#3b82f6;color:white;border-radius:6px;text-decoration:none" %>
   </div>
