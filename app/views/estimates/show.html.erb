@@ -95,12 +95,11 @@
         <% mats = mats.select { |m| m["name"].present? || m["cost"].to_i > 0 } %>
         <div class="py-3.5 border-b border-gray-100">
           <div class="flex justify-between items-baseline gap-4">
-            <span class="text-base text-gray-800 font-semibold"><%= item["description"] %></span>
+            <span class="text-base text-gray-800 font-semibold">
+              <%= item["description"] %><% if item["note"].present? %><span class="text-sm text-gray-500 font-normal">　（<%= item["note"] %>）</span><% end %>
+            </span>
             <span class="text-base font-bold text-gray-900 flex-shrink-0"><%= amt > 0 ? "¥#{number_with_delimiter(amt)}" : "" %></span>
           </div>
-          <% if item["note"].present? %>
-            <div class="mt-0.5 text-sm text-gray-500 italic"><%= item["note"] %></div>
-          <% end %>
           <div class="mt-1.5 space-y-0.5">
             <% unless multi %>
               <% if qty > 0 || price > 0 %>

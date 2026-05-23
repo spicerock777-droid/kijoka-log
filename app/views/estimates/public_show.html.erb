@@ -58,13 +58,11 @@
 
           <div class="py-3 border-b border-gray-100 last:border-b-0">
             <div class="flex justify-between items-baseline gap-4">
-              <span class="text-sm text-gray-700 font-medium"><%= item["description"] %></span>
+              <span class="text-sm text-gray-700 font-medium">
+                <%= item["description"] %><% if item["note"].present? %><span class="text-xs text-gray-400 font-normal">　（<%= item["note"] %>）</span><% end %>
+              </span>
               <span class="text-sm font-bold text-gray-800 flex-shrink-0"><%= amt > 0 ? "¥#{number_with_delimiter(amt)}" : "" %></span>
             </div>
-
-            <% if item["note"].present? %>
-              <div class="mt-0.5 text-xs text-gray-400 italic"><%= item["note"] %></div>
-            <% end %>
 
             <div class="mt-1.5 space-y-0.5">
               <% unless multi %>
