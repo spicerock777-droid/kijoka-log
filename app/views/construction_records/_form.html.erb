@@ -63,6 +63,25 @@
     <p class="text-xs text-gray-500 mt-1">最大10枚まで</p>
   </div>
 
+  <% persisted_photos = @construction_record.photos.select { |p| p.blob.persisted? } %>
+  <% if persisted_photos.any? %>
+    <div class="my-5">
+      <p class="block font-medium text-gray-700 mb-2">写真コメント</p>
+      <div class="grid grid-cols-2 gap-3">
+        <% persisted_photos.each do |photo| %>
+          <div class="border border-gray-200 rounded-lg p-2">
+            <%= image_tag photo.variant(resize_to_fill: [200, 150]), class: "w-full h-28 object-cover rounded mb-2" %>
+            <%= text_field_tag "construction_record[photo_captions][#{photo.blob.id}]",
+                  (@construction_record.photo_captions || {}).fetch(photo.blob.id.to_s, ""),
+                  placeholder: "コメントを入力",
+                  class: "block w-full text-sm border border-gray-300 rounded px-2 py-1 focus:outline-blue-600" %>
+          </div>
+        <% end %>
+      </div>
+      <p class="text-xs text-gray-400 mt-2">※新しく追加した写真のコメントは保存後に入力できます</p>
+    </div>
+  <% end %>
+
   <div class="mt-6">
     <%= form.submit "保存する", class: "w-full sm:w-auto rounded-md px-5 py-2.5 bg-green-700 hover:bg-green-600 text-white font-medium cursor-pointer" %>
   </div>

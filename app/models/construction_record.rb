@@ -3,6 +3,7 @@ class ConstructionRecord < ApplicationRecord
   belongs_to :project, optional: true
 
   has_many_attached :photos
+  serialize :photo_captions, coder: JSON
 
   MAX_PHOTOS = 10
 

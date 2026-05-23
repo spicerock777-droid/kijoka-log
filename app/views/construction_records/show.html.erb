@@ -60,7 +60,13 @@
       <h2 class="text-sm font-bold text-gray-500 mb-2">写真</h2>
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
         <% @construction_record.photos.each do |photo| %>
-          <%= image_tag photo, class: "w-full h-40 object-cover rounded-md" %>
+          <div>
+            <%= image_tag photo, class: "w-full h-40 object-cover rounded-md" %>
+            <% caption = (@construction_record.photo_captions || {}).fetch(photo.blob.id.to_s, "") %>
+            <% if caption.present? %>
+              <p class="text-xs text-gray-500 mt-1 px-1"><%= caption %></p>
+            <% end %>
+          </div>
         <% end %>
       </div>
     </div>
