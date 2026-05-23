@@ -51,7 +51,7 @@ class ConstructionRecordsController < ApplicationController
     params.require(:construction_record).permit(
       :worked_on, :site, :work_items, :intent, :observations, :next_steps,
       :construction_cost, :labor_cost, :cost_memo,
-      photos: [], photo_captions: {}
+      photos: [], photo_captions: {}, photo_types: {}
     )
   end
 end

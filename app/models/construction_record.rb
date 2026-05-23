@@ -4,6 +4,7 @@ class ConstructionRecord < ApplicationRecord
 
   has_many_attached :photos
   serialize :photo_captions, coder: JSON
+  serialize :photo_types, coder: JSON
 
   MAX_PHOTOS = 10
 
