@@ -62,3 +62,6 @@ end
 
 # 認証
 gem "devise"
+
+# 写真クラウドストレージ
+gem "cloudinary"
