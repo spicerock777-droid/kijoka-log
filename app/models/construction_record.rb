@@ -9,7 +9,8 @@ class ConstructionRecord < ApplicationRecord
   MAX_PHOTOS = 10
 
   validates :worked_on, presence: true
-  validates :site, presence: true
+  validates :project, presence: true
+  validates :work_items, presence: true
   validate :photos_count_within_limit
 
   scope :recent, -> { order(worked_on: :desc) }
