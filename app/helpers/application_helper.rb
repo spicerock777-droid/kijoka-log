@@ -9,4 +9,8 @@ module ApplicationHelper
     sep = path.include?("?") ? "&" : "?"
     "#{base}#{path}#{sep}ngrok-skip-browser-warning=true"
   end
+
+  def photo_url(photo, width:, height:, crop: :fill)
+    Cloudinary::Utils.cloudinary_url(photo.blob.key, width: width, height: height, crop: crop, fetch_format: :auto, quality: :auto)
+  end
 end

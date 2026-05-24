@@ -18,7 +18,6 @@ class ConstructionRecordsController < ApplicationController
     @construction_record.user = current_user
 
     if @construction_record.save
-      preprocess_photo_variants(@construction_record)
       redirect_to project_construction_record_path(@project, @construction_record), notice: "施工記録を保存しました"
     else
       render :new, status: :unprocessable_content
@@ -31,7 +30,6 @@ class ConstructionRecordsController < ApplicationController
                    params.dig(:construction_record, :photos).all?(&:blank?))
     p = p.except(:photos) unless new_photos
     if @construction_record.update(p)
-      preprocess_photo_variants(@construction_record) if new_photos
       redirect_to project_construction_record_path(@project, @construction_record), notice: "施工記録を更新しました"
     else
       render :edit, status: :unprocessable_content
@@ -51,14 +49,6 @@ class ConstructionRecordsController < ApplicationController
 
   def set_construction_record
     @construction_record = @project.construction_records.find(params[:id])
-  end
-
-  def preprocess_photo_variants(record)
-    record.photos.each do |photo|
-      photo.variant(resize_to_fill: [400, 300]).processed
-    rescue StandardError
-      next
-    end
   end
 
   def construction_record_params
