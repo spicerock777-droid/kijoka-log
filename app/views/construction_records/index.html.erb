@@ -29,7 +29,7 @@
           <% if record.work_items.present? %>
             <p class="text-sm text-gray-700 mt-1"><%= record.work_items.truncate(100) %></p>
           <% end %>
-          <% if record.photos.attached? %>
+          <% if record.photos.any? %>
             <p class="text-xs text-gray-400 mt-2">📷 <%= record.photos.count %>枚</p>
           <% end %>
         </div>
