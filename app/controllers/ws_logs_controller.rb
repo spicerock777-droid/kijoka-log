@@ -11,6 +11,7 @@ class WsLogsController < ApplicationController
     @ws_log = @project.ws_logs.build(ws_log_params)
     @ws_log.user = current_user
     if @ws_log.save
+      PhotoAttachmentService.new(@ws_log).attach(new_photo_files)
       redirect_to project_ws_log_path(@project, @ws_log), notice: "WSログを保存しました"
     else
       render :new, status: :unprocessable_entity
@@ -25,6 +26,7 @@ class WsLogsController < ApplicationController
 
   def update
     if @ws_log.update(ws_log_params)
+      PhotoAttachmentService.new(@ws_log).attach(new_photo_files)
       redirect_to project_ws_log_path(@project, @ws_log), notice: "更新しました"
     else
       render :edit, status: :unprocessable_entity
@@ -49,8 +51,11 @@ class WsLogsController < ApplicationController
   def ws_log_params
     params.require(:ws_log).permit(
       :held_on, :title, :participants_count, :participant_notes,
-      :weather, :content, :reflection, :reactions, :improvements,
-      photos: []
+      :weather, :content, :reflection, :reactions, :improvements
     )
+  end
+
+  def new_photo_files
+    (params[:new_photos] || []).reject(&:blank?)
   end
 end

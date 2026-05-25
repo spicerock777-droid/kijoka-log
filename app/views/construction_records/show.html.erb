@@ -55,11 +55,9 @@
     </div>
   <% end %>
 
-  <% if @construction_record.photos.attached? %>
-    <% types_map = @construction_record.photo_types || {} %>
-    <% captions_map = @construction_record.photo_captions || {} %>
-    <% grouped = @construction_record.photos.group_by { |p| types_map[p.blob.id.to_s].presence || "other" } %>
-    <% [["before","ビフォー","text-blue-600"],["during","作業中","text-yellow-600"],["after","アフター","text-green-600"],["other","その他","text-gray-500"]].each do |type, label, color| %>
+  <% if @construction_record.photos.any? %>
+    <% grouped = @construction_record.photos.ordered.group_by(&:photo_type) %>
+    <% [["before","ビフォー","text-blue-600"],["during","作業中","text-yellow-600"],["after","アフター","text-green-600"]].each do |type, label, color| %>
       <% photos = grouped[type]; next if photos.blank? %>
       <div class="mb-5">
         <h2 class="text-sm font-bold <%= color %> mb-2">── <%= label %></h2>
@@ -67,9 +65,8 @@
           <% photos.each do |photo| %>
             <div>
               <%= image_tag photo_url(photo, width: 400, height: 300), class: "w-full h-40 object-cover rounded-md" %>
-              <% caption = captions_map.fetch(photo.blob.id.to_s, "") %>
-              <% if caption.present? %>
-                <p class="text-xs text-gray-500 mt-1 px-1"><%= caption %></p>
+              <% if photo.caption.present? %>
+                <p class="text-xs text-gray-500 mt-1 px-1"><%= photo.caption %></p>
               <% end %>
             </div>
           <% end %>

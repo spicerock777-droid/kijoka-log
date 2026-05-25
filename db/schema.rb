@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_23_030750) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_25_000002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -53,7 +53,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_23_030750) do
     t.text "photo_captions"
     t.text "photo_types"
     t.bigint "project_id"
-    t.string "site", null: false
+    t.string "site"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.text "work_items"
@@ -97,6 +97,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_23_030750) do
     t.index ["project_id"], name: "index_invoices_on_project_id"
     t.index ["share_token"], name: "index_invoices_on_share_token", unique: true
     t.index ["user_id"], name: "index_invoices_on_user_id"
+  end
+
+  create_table "photos", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.text "caption"
+    t.datetime "created_at", null: false
+    t.integer "photo_type", default: 1, null: false
+    t.integer "position", default: 0, null: false
+    t.bigint "record_id", null: false
+    t.string "record_type", null: false
+    t.datetime "updated_at", null: false
+    t.index ["blob_id"], name: "index_photos_on_blob_id"
+    t.index ["photo_type"], name: "index_photos_on_photo_type"
+    t.index ["record_type", "record_id"], name: "index_photos_on_record"
   end
 
   create_table "projects", force: :cascade do |t|
@@ -164,6 +178,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_23_030750) do
   add_foreign_key "estimates", "users"
   add_foreign_key "invoices", "projects"
   add_foreign_key "invoices", "users"
+  add_foreign_key "photos", "active_storage_blobs", column: "blob_id"
   add_foreign_key "receipts", "projects"
   add_foreign_key "receipts", "users"
   add_foreign_key "ws_logs", "projects"

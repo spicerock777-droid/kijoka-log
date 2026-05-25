@@ -2,7 +2,7 @@ class WsLog < ApplicationRecord
   belongs_to :project
   belongs_to :user
 
-  has_many_attached :photos
+  has_many :photos, as: :record, dependent: :destroy
 
   validates :held_on, :title, presence: true
 

@@ -67,12 +67,17 @@
       </div>
     <% end %>
 
-    <% if @ws_log.photos.attached? %>
+    <% if @ws_log.photos.any? %>
       <div>
         <div class="text-xs font-bold text-gray-500 mb-2">写真</div>
         <div class="grid grid-cols-2 gap-2">
-          <% @ws_log.photos.each do |photo| %>
-            <%= image_tag photo_url(photo, width: 400, height: 300), class: "w-full h-36 object-cover rounded-lg", loading: "lazy" %>
+          <% @ws_log.photos.ordered.each do |photo| %>
+            <div>
+              <%= image_tag photo_url(photo, width: 400, height: 300), class: "w-full h-36 object-cover rounded-lg", loading: "lazy" %>
+              <% if photo.caption.present? %>
+                <p class="text-xs text-gray-500 mt-1"><%= photo.caption %></p>
+              <% end %>
+            </div>
           <% end %>
         </div>
       </div>

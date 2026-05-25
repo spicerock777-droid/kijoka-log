@@ -13,9 +13,9 @@ class ProjectsController < ApplicationController
   def gallery
     @project = Project.find_by!(slug: params[:id])
     records_with_photos = @project.construction_records
+                                  .with_photos
                                   .order(worked_on: :asc)
-                                  .includes(photos_attachments: :blob)
-                                  .select { |r| r.photos.attached? }
+                                  .includes(photos: :blob)
     @records_by_site = records_with_photos.group_by(&:site)
   end
 end
