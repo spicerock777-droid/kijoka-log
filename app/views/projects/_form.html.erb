@@ -1,0 +1,19 @@
+<%= form_with model: project, class: "space-y-4" do |f| %>
+  <% if project.errors.any? %>
+    <div class="bg-red-50 border border-red-200 rounded-md p-3 text-sm text-red-700">
+      <% project.errors.full_messages.each do |msg| %>
+        <p><%= msg %></p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :name, "現場名", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= f.text_field :name, class: "w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500", placeholder: "例：勝山邸、〇〇農園" %>
+  </div>
+
+  <div class="flex gap-3 pt-2">
+    <%= f.submit "保存する", class: "rounded-md px-5 py-2 bg-green-700 hover:bg-green-600 text-white text-sm font-medium cursor-pointer" %>
+    <%= link_to "キャンセル", projects_path, class: "rounded-md px-5 py-2 border border-gray-300 text-sm text-gray-600 hover:bg-gray-50" %>
+  </div>
+<% end %>

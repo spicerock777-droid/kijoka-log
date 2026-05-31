@@ -1,7 +1,10 @@
 <% content_for :title, "現場一覧" %>
 
 <div class="w-full">
-  <h1 class="font-bold text-2xl text-green-900 mb-6">現場一覧</h1>
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="font-bold text-2xl text-green-900">現場一覧</h1>
+    <%= link_to "＋ 現場追加", new_project_path, class: "rounded-md px-4 py-2 bg-green-700 hover:bg-green-600 text-white text-sm font-medium" %>
+  </div>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <% @projects.each do |project| %>
