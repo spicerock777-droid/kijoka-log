@@ -5,8 +5,8 @@ class PhotoAttachmentService
     @record = record
   end
 
-  def attach(files)
-    files.each do |file|
+  def attach(files, types = [])
+    files.each_with_index do |file, i|
       next if file.blank?
       break if @record.photos.count >= MAX_PHOTOS
 
@@ -15,9 +15,10 @@ class PhotoAttachmentService
         filename: file.original_filename,
         content_type: file.content_type
       )
+      type = Photo.photo_types.key?(types[i].to_s) ? types[i].to_s : "before"
       @record.photos.create!(
         blob: blob,
-        photo_type: :during,
+        photo_type: type,
         position: @record.photos.count
       )
     end

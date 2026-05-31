@@ -18,7 +18,7 @@ class ConstructionRecordsController < ApplicationController
     @construction_record.user = current_user
 
     if @construction_record.save
-      PhotoAttachmentService.new(@construction_record).attach(new_photo_files)
+      PhotoAttachmentService.new(@construction_record).attach(new_photo_files, new_photo_types)
       redirect_to project_construction_record_path(@project, @construction_record), notice: "施工記録を保存しました"
     else
       render :new, status: :unprocessable_content
@@ -29,7 +29,7 @@ class ConstructionRecordsController < ApplicationController
     if @construction_record.update(construction_record_params)
       service = PhotoAttachmentService.new(@construction_record)
       service.update_metadata(params[:photo_updates])
-      service.attach(new_photo_files)
+      service.attach(new_photo_files, new_photo_types)
       redirect_to project_construction_record_path(@project, @construction_record), notice: "施工記録を更新しました"
     else
       render :edit, status: :unprocessable_content
@@ -60,5 +60,9 @@ class ConstructionRecordsController < ApplicationController
 
   def new_photo_files
     (params[:new_photos] || []).reject(&:blank?)
+  end
+
+  def new_photo_types
+    params[:new_photo_types] || []
   end
 end
