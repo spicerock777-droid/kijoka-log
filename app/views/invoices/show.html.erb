@@ -126,7 +126,11 @@
 @media print {
   .no-print { display: none !important; }
   nav { display: none !important; }
-  body { background: white; }
-  #invoice-print { border: none; box-shadow: none; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-scheme: light !important; }
+  html, body { background: white !important; color: black !important; }
+  #invoice-print { border: none !important; box-shadow: none !important; background: white !important; }
+  #invoice-print * { background-color: revert !important; }
+  .bg-gradient-to-r { background: #f0fdf4 !important; }
+  .bg-gray-50 { background: #f9fafb !important; }
 }
 </style>
