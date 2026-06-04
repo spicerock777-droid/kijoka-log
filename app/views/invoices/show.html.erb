@@ -94,6 +94,26 @@
         </div>
       <% end %>
 
+      <% user = @invoice.user %>
+      <% if user.bank_name.present? %>
+        <div class="border-t border-gray-100 pt-4">
+          <div class="text-xs text-gray-400 mb-3 tracking-wide">振込先</div>
+          <div class="bg-gray-50 rounded-lg px-4 py-3 text-sm text-gray-700 space-y-1.5">
+            <div><span class="text-xs text-gray-400 inline-block w-16">銀行名</span><%= user.bank_name %></div>
+            <% if user.branch_name.present? %>
+              <div><span class="text-xs text-gray-400 inline-block w-16">支店名</span><%= user.branch_name %></div>
+            <% end %>
+            <div><span class="text-xs text-gray-400 inline-block w-16">口座種別</span><%= user.account_type.presence || "普通" %></div>
+            <% if user.account_number.present? %>
+              <div><span class="text-xs text-gray-400 inline-block w-16">口座番号</span><%= user.account_number %></div>
+            <% end %>
+            <% if user.account_holder.present? %>
+              <div><span class="text-xs text-gray-400 inline-block w-16">口座名義</span><%= user.account_holder %></div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
       <div class="text-right text-sm text-gray-500 border-t border-gray-100 pt-4">
         <div class="font-medium text-gray-700"><%= @project.name %></div>
         <div class="text-xs text-gray-400 mt-1">環境整備事業</div>

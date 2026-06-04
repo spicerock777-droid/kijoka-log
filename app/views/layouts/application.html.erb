@@ -30,6 +30,7 @@
         <div class="flex items-center gap-4">
           <%= link_to "書類一覧", documents_path, class: "text-sm text-green-200 hover:text-white" %>
           <% if user_signed_in? %>
+            <%= link_to "設定", edit_settings_path, class: "text-sm text-green-200 hover:text-white" %>
             <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete }, class: "text-sm text-green-200 hover:text-white" %>
           <% end %>
         </div>
